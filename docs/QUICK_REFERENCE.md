@@ -3,7 +3,9 @@
 ## 📦 Installation
 ```bash
 pip install -e .                       # Install in development mode
-omnihost --help                        # Verify installation
+omnihost --version                     # Check version
+omnihost --help                        # View all commands
+omnihost examples                      # See usage examples
 ```
 
 ## 🎯 Server Management
@@ -56,14 +58,21 @@ omnihost exec-multi "h1,h2,h3" "<cmd>"     # Comma-separated list
 omnihost exec-multi "web01,web02" "<cmd>" -p 3  # With parallelism
 ```
 
-## 🎛️ Common Options
+## 🎛️ Global Options
+```bash
+--version              # Show version and exit
+--verbose, -v          # Verbose output with detailed logging
+--debug                # Debug mode with extensive logging
+--help                 # Show help message
+```
+
+## 🎛️ Common Command Options
 ```bash
 -p, --parallel N       # Parallel connections (default: 5, range: 1-20)
 -t, --timeout N        # Timeout in seconds (default: 30)
 --show-output          # Show individual outputs (default for bulk ops)
 --no-output            # Hide outputs, show summary only
 --plain                # Plain output without Rich formatting
--v, --verbose          # Verbose output
 -n, --lines N          # Number of log lines (for logs command)
 -f, --follow           # Follow logs in real-time
 ```

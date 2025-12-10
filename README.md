@@ -20,6 +20,10 @@ Manage hundreds of servers with lightning-fast parallel execution, beautiful CLI
 ## ⚡ Highlights
 
 ```bash
+# Quick start
+omnihost --version              # Check version
+omnihost examples               # See usage examples
+
 # Execute on all servers in parallel - 10x faster than serial execution
 omnihost exec-all "systemctl status nginx" --parallel 10
 
@@ -30,6 +34,10 @@ omnihost memory db01
 
 # Beautiful, formatted output with Rich library
 omnihost list  # Stunning table view of all servers
+
+# Enhanced logging for troubleshooting
+omnihost --verbose exec web01 "ls -la"
+omnihost --debug exec-all "uptime"
 ```
 
 ## 🎯 Why OmniHost?

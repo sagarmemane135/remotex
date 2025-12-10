@@ -5,6 +5,20 @@ All notable changes to OmniHost will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `--version` flag for quick version check (works standalone)
+- `version` command showing detailed version information
+- `examples` command with formatted usage examples
+- Standardized exit codes system (0-130) with error suggestions
+- `--verbose` and `--debug` global flags for enhanced logging
+- Shell completion support (bash/zsh/fish)
+
+### Changed
+- Improved CLI user experience following best practices
+- Enhanced error handling with meaningful exit codes
+
 ## [1.0.0] - 2025-12-10
 
 ### Added
