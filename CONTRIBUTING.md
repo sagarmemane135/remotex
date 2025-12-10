@@ -1,0 +1,371 @@
+# Contributing to OmniHost
+
+First off, thank you for considering contributing to OmniHost! It's people like you that make OmniHost such a great tool for DevOps engineers.
+
+## 🌟 Code of Conduct
+
+This project and everyone participating in it is governed by our [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+
+## 🤔 How Can I Contribute?
+
+### Reporting Bugs
+
+Before creating bug reports, please check the existing issues as you might find that you don't need to create one. When you are creating a bug report, please include as many details as possible:
+
+* **Use a clear and descriptive title**
+* **Describe the exact steps to reproduce the problem**
+* **Provide specific examples**
+* **Describe the behavior you observed after following the steps**
+* **Explain which behavior you expected to see instead and why**
+* **Include screenshots if relevant**
+* **Include your environment details**: OS, Python version, OmniHost version
+
+**Example bug report:**
+```markdown
+## Bug: exec-all fails with timeout error
+
+**Environment:**
+- OS: Ubuntu 22.04
+- Python: 3.11.5
+- OmniHost: 1.0.0
+
+**Steps to reproduce:**
+1. Configure 10 servers
+2. Run `omnihost exec-all "uptime"`
+3. Observe timeout errors
+
+**Expected:** All servers respond successfully
+**Actual:** 5 servers timeout after 30 seconds
+
+**Additional context:** Servers are in different regions with varying latency
+```
+
+### Suggesting Enhancements
+
+Enhancement suggestions are tracked as GitHub issues. When creating an enhancement suggestion, please include:
+
+* **Use a clear and descriptive title**
+* **Provide a step-by-step description of the suggested enhancement**
+* **Provide specific examples to demonstrate the steps**
+* **Describe the current behavior and explain which behavior you expected to see instead**
+* **Explain why this enhancement would be useful**
+
+### Pull Requests
+
+* Fill in the required template
+* Follow the Python style guide (PEP 8)
+* Include appropriate test cases
+* Update documentation as needed
+* End all files with a newline
+
+## 🚀 Development Setup
+
+### 1. Fork and Clone
+
+```bash
+# Fork the repository on GitHub, then:
+git clone https://github.com/sagar.memane/omnihost.git
+cd omnihost
+```
+
+### 2. Create Virtual Environment
+
+```bash
+# Create virtual environment
+python3 -m venv venv
+
+# Activate it
+# On Linux/Mac:
+source venv/bin/activate
+# On Windows:
+venv\Scripts\activate
+```
+
+### 3. Install in Development Mode
+
+```bash
+pip install -e .
+```
+
+### 4. Create a Branch
+
+```bash
+git checkout -b feature/your-feature-name
+# or
+git checkout -b fix/your-bug-fix
+```
+
+## 📝 Development Guidelines
+
+### Code Style
+
+We follow PEP 8 with some specific preferences:
+
+```python
+# ✅ Good
+def execute_command(host: str, command: str, timeout: int = 30) -> dict:
+    """
+    Execute a command on a remote host.
+    
+    Args:
+        host: The hostname or alias
+        command: The command to execute
+        timeout: Command timeout in seconds
+        
+    Returns:
+        dict: Result containing stdout, stderr, and exit code
+    """
+    pass
+
+# ❌ Bad
+def exec_cmd(h,c,t=30):
+    pass
+```
+
+### Project Structure
+
+```
+omnihost/
+├── __init__.py           # Package metadata
+├── cli.py                # CLI entry point
+├── config.py             # Configuration management
+├── ssh_config.py         # SSH config operations
+├── ssh_client.py         # Connection management
+├── performance.py        # Caching & optimization
+├── utils.py              # Shared utilities
+└── commands/             # Command modules
+    ├── server_management.py
+    ├── exec_command.py
+    ├── connect_command.py
+    ├── bulk_operations.py
+    └── quick_commands.py
+```
+
+### Adding New Commands
+
+1. **Create command file** in `omnihost/commands/`:
+
+```python
+# omnihost/commands/my_command.py
+import typer
+from rich.console import Console
+
+console = Console()
+
+def register_my_command(app: typer.Typer):
+    @app.command(name="mycommand")
+    def my_command(
+        host: str = typer.Argument(..., help="Server hostname"),
+        option: bool = typer.Option(False, "--opt", help="Some option")
+    ):
+        """
+        Description of what your command does.
+        """
+        console.print(f"[green]Running my command on {host}[/green]")
+        # Your implementation here
+```
+
+2. **Register in cli.py**:
+
+```python
+from omnihost.commands.my_command import register_my_command
+
+def main():
+    app = typer.Typer(...)
+    # ... other registrations
+    register_my_command(app)
+    app()
+```
+
+3. **Reinstall package**:
+
+```bash
+pip install -e .
+```
+
+### Coding Conventions
+
+#### Use Type Hints
+```python
+# ✅ Good
+def connect(host: str, port: int = 22) -> paramiko.SSHClient:
+    pass
+
+# ❌ Bad
+def connect(host, port=22):
+    pass
+```
+
+#### Use Rich for Output
+```python
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
+
+# ✅ Good
+console.print(Panel("Success!", style="green"))
+
+# ❌ Bad
+print("Success!")
+```
+
+#### Handle Errors Gracefully
+```python
+# ✅ Good
+try:
+    client = create_ssh_client(host)
+except ConnectionError as e:
+    console.print(Panel(
+        f"[red]Connection failed: {e}[/red]",
+        title="❌ Error"
+    ))
+    raise typer.Exit(1)
+
+# ❌ Bad
+client = create_ssh_client(host)  # Let it crash
+```
+
+#### Use Descriptive Variable Names
+```python
+# ✅ Good
+connection_timeout = 30
+ssh_client = create_ssh_client(host_config)
+
+# ❌ Bad
+t = 30
+c = create_ssh_client(h)
+```
+
+### Testing
+
+We use pytest for testing. Add tests for new features:
+
+```python
+# tests/test_my_command.py
+import pytest
+from omnihost.commands.my_command import my_command
+
+def test_my_command_success():
+    result = my_command("testhost")
+    assert result.exit_code == 0
+
+def test_my_command_invalid_host():
+    with pytest.raises(ValueError):
+        my_command("invalid-host")
+```
+
+Run tests:
+```bash
+pytest
+pytest tests/test_my_command.py  # Specific test
+pytest -v  # Verbose output
+```
+
+### Documentation
+
+Update documentation when adding features:
+
+1. **Docstrings** - All functions need docstrings
+2. **QUICK_REFERENCE.md** - Add command examples
+3. **PERFORMANCE.md** - If it affects performance
+4. **README.md** - If it's a major feature
+
+## 🔄 Pull Request Process
+
+### 1. Update Your Fork
+
+```bash
+git remote add upstream https://github.com/sagar.memane/omnihost.git
+git fetch upstream
+git checkout main
+git merge upstream/main
+```
+
+### 2. Make Your Changes
+
+```bash
+git checkout -b feature/amazing-feature
+# Make your changes
+git add .
+git commit -m "Add: Amazing feature that does X"
+```
+
+### Commit Message Format
+
+We use conventional commits:
+
+```
+<type>: <description>
+
+[optional body]
+
+[optional footer]
+```
+
+**Types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation only
+- `style`: Code style (formatting, missing semicolons, etc.)
+- `refactor`: Code refactoring
+- `perf`: Performance improvement
+- `test`: Adding tests
+- `chore`: Maintenance tasks
+
+**Examples:**
+```bash
+git commit -m "feat: Add bulk SSH key deployment command"
+git commit -m "fix: Handle connection timeout in exec-all"
+git commit -m "docs: Update quick reference for new commands"
+git commit -m "perf: Implement connection pooling for bulk operations"
+```
+
+### 3. Push and Create PR
+
+```bash
+git push origin feature/amazing-feature
+```
+
+Then create a Pull Request on GitHub with:
+- **Clear title** describing the change
+- **Description** explaining what and why
+- **Link to related issues** (Fixes #123)
+- **Screenshots** if UI/output changed
+- **Testing** description of how you tested
+
+### 4. Code Review
+
+* Address review comments
+* Keep discussions focused and professional
+* Update your PR based on feedback
+
+```bash
+# Make changes based on feedback
+git add .
+git commit -m "fix: Address review comments"
+git push origin feature/amazing-feature
+```
+
+## 🎯 Good First Issues
+
+Look for issues labeled `good first issue` or `help wanted`. These are great starting points for new contributors.
+
+## 💬 Questions?
+
+* Open an issue with the `question` label
+* Join our discussions
+* Check existing documentation
+
+## 📜 License
+
+By contributing, you agree that your contributions will be licensed under the MIT License.
+
+## 🙏 Recognition
+
+Contributors will be recognized in:
+- README.md contributors section
+- CHANGELOG.md for their contributions
+- GitHub contributors page
+
+Thank you for contributing to OmniHost! 🚀
