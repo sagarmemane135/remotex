@@ -1,0 +1,33 @@
+# Manifest file for source distributions
+include README.md
+include LICENSE
+include CHANGELOG.md
+include CONTRIBUTING.md
+include CODE_OF_CONDUCT.md
+include SECURITY.md
+include requirements.txt
+include pyproject.toml
+
+# Include documentation
+recursive-include docs *.md
+
+# Include GitHub templates
+recursive-include .github *.md *.yml
+
+# Exclude unwanted files
+exclude .gitignore
+exclude .gitattributes
+exclude setup_github.sh
+exclude main.py
+
+# Exclude build artifacts
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude .DS_Store
+global-exclude *.swp
+global-exclude *.swo
+
+# Exclude version control
+prune .git
+prune venv
+prune .venv
