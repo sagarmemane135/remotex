@@ -293,32 +293,151 @@ git commit -m "Add: Amazing feature that does X"
 
 ### Commit Message Format
 
-We use conventional commits:
+We follow [Conventional Commits](https://www.conventionalcommits.org/) specification strictly:
 
 ```
-<type>: <description>
+<type>(<scope>): <subject>
 
-[optional body]
+<body>
 
-[optional footer]
+<footer>
 ```
 
-**Types:**
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation only
-- `style`: Code style (formatting, missing semicolons, etc.)
-- `refactor`: Code refactoring
-- `perf`: Performance improvement
-- `test`: Adding tests
-- `chore`: Maintenance tasks
+#### Type (Required)
 
-**Examples:**
+Must be one of:
+
+- **feat**: New feature for the user
+  ```
+  feat(commands): add bulk SSH key deployment command
+  ```
+
+- **fix**: Bug fix for the user
+  ```
+  fix(ssh): resolve connection timeout issues with Python 3.8
+  ```
+
+- **docs**: Documentation changes only
+  ```
+  docs(readme): update installation instructions
+  ```
+
+- **style**: Code style changes (formatting, no functional changes)
+  ```
+  style(cli): format code with black
+  ```
+
+- **refactor**: Code refactoring (no feature change or bug fix)
+  ```
+  refactor(config): simplify configuration loading logic
+  ```
+
+- **perf**: Performance improvements
+  ```
+  perf(bulk): optimize parallel execution with connection pooling
+  ```
+
+- **test**: Adding or updating tests
+  ```
+  test(ssh): add unit tests for connection retry logic
+  ```
+
+- **build**: Build system or dependency changes
+  ```
+  build(deps): upgrade paramiko to v3.4.0
+  ```
+
+- **ci**: CI/CD configuration changes
+  ```
+  ci(actions): add Python 3.12 to test matrix
+  ```
+
+- **chore**: Other changes (maintenance, tooling)
+  ```
+  chore(release): bump version to 1.0.2
+  ```
+
+- **revert**: Revert a previous commit
+  ```
+  revert: feat(auth): remove OAuth support
+  ```
+
+#### Scope (Optional but Recommended)
+
+The scope specifies which part of the codebase is affected:
+- `commands` - Command implementations
+- `ssh` - SSH connection handling
+- `config` - Configuration management
+- `cli` - CLI interface
+- `audit` - Audit logging
+- `bulk` - Bulk operations
+- `ci` - CI/CD pipelines
+- `docs` - Documentation
+
+#### Subject (Required)
+
+- Use imperative, present tense: "add" not "added" or "adds"
+- Don't capitalize first letter
+- No period (.) at the end
+- Keep it under 50 characters
+
+#### Body (Optional)
+
+- Explain **what** and **why** (not how)
+- Wrap at 72 characters
+- Separate from subject with a blank line
+
+#### Footer (Optional)
+
+Reference issues and breaking changes:
+
+```
+Fixes #123
+Closes #456
+
+BREAKING CHANGE: Configuration format changed from YAML to JSON
+```
+
+#### Full Examples
+
+**Simple feature:**
 ```bash
-git commit -m "feat: Add bulk SSH key deployment command"
-git commit -m "fix: Handle connection timeout in exec-all"
-git commit -m "docs: Update quick reference for new commands"
-git commit -m "perf: Implement connection pooling for bulk operations"
+git commit -m "feat(commands): add quick-ssh command for rapid connections"
+```
+
+**Bug fix with description:**
+```bash
+git commit -m "fix(ssh): handle connection timeout gracefully
+
+Previously, connection timeouts would crash the application.
+Now they're caught and reported with a clear message.
+
+Fixes #234"
+```
+
+**Breaking change:**
+```bash
+git commit -m "feat(config)!: migrate configuration to JSON format
+
+Replace YAML with JSON for better compatibility.
+
+BREAKING CHANGE: Config files must be migrated from
+.omnihost/config.yaml to .omnihost/config.json"
+```
+
+**Performance improvement:**
+```bash
+git commit -m "perf(bulk): implement connection pooling
+
+Reuse SSH connections for multiple commands to reduce overhead.
+Improves exec-all performance by 3x for 100+ servers."
+```
+
+**Multiple types of changes** (create separate commits):
+```bash
+git commit -m "feat(audit): add audit log export command"
+git commit -m "docs(audit): update audit documentation"
+git commit -m "test(audit): add audit export tests"
 ```
 
 ### 3. Push and Create PR
