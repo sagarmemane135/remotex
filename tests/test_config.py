@@ -8,7 +8,7 @@ import tempfile
 import json
 import os
 
-from omnihost.config import (
+from remotex.config import (
     load_config,
     save_config,
     get_default_server,
@@ -29,7 +29,7 @@ class TestConfig(unittest.TestCase):
             "command_aliases": {}
         }
     
-    @patch('omnihost.config.CONFIG_FILE')
+    @patch('remotex.config.CONFIG_FILE')
     def test_load_config(self, mock_file):
         """Test loading configuration."""
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
@@ -47,7 +47,7 @@ class TestConfig(unittest.TestCase):
     
     def test_get_default_server(self):
         """Test getting default server."""
-        with patch('omnihost.config.load_config') as mock_load:
+        with patch('remotex.config.load_config') as mock_load:
             mock_load.return_value = {"default_server": "test1"}
             server = get_default_server()
             self.assertEqual(server, "test1")

@@ -8,9 +8,9 @@ from rich.console import Console
 from rich.panel import Panel
 from rich import box
 
-from omnihost.ssh_config import parse_ssh_config
-from omnihost.ssh_client import create_ssh_client
-from omnihost.history import add_to_history
+from remotex.ssh_config import parse_ssh_config
+from remotex.ssh_client import create_ssh_client
+from remotex.history import add_to_history
 
 console = Console()
 
@@ -31,10 +31,10 @@ def exec_command(
     Execute a command on a remote server and print the output.
     
     Example:
-        omnihost exec myserver "ls -la"           # Full formatted output
-        omnihost exec myserver "df -h" -p         # Plain output
-        omnihost exec myserver "uptime" -c        # Compact (fast)
-        omnihost exec myserver "test -f /tmp/x" -s  # Silent (exit code only)
+        remotex exec myserver "ls -la"           # Full formatted output
+        remotex exec myserver "df -h" -p         # Plain output
+        remotex exec myserver "uptime" -c        # Compact (fast)
+        remotex exec myserver "test -f /tmp/x" -s  # Silent (exit code only)
     """
     # Get host info for display
     host_config = parse_ssh_config(host)

@@ -13,7 +13,7 @@ from rich.panel import Panel
 from rich.prompt import Prompt, Confirm
 from rich import box
 
-from omnihost.ssh_config import (
+from remotex.ssh_config import (
     get_all_hosts,
     parse_ssh_config,
     add_host_to_config,
@@ -21,7 +21,7 @@ from omnihost.ssh_config import (
     ensure_ssh_config_exists,
     host_exists
 )
-from omnihost.ssh_client import create_ssh_client
+from remotex.ssh_client import create_ssh_client
 
 console = Console()
 
@@ -49,7 +49,7 @@ def list_servers(
     
     if not hosts:
         console.print("[yellow]No servers configured yet.[/yellow]")
-        console.print("\n[dim]Use 'omnihost add' to add a new server.[/dim]")
+        console.print("\n[dim]Use 'remotex add' to add a new server.[/dim]")
         return
     
     table = Table(title="Configured Servers", box=box.ROUNDED, show_header=True, header_style="bold magenta")
@@ -156,7 +156,7 @@ def remove(
     # Check if host exists
     if not host_exists(host):
         console.print(f"[red]Error: Server '{host}' not found[/red]")
-        console.print("\n[dim]Use 'omnihost list' to see all configured servers.[/dim]")
+        console.print("\n[dim]Use 'remotex list' to see all configured servers.[/dim]")
         raise typer.Exit(code=1)
     
     # Confirm removal

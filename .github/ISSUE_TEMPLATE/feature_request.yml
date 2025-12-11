@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest an idea for OmniHost
+description: Suggest an idea for RemoteX
 title: "[Feature]: "
 labels: ["enhancement", "triage"]
 body:
@@ -55,7 +55,7 @@ body:
       label: Example Usage
       description: Show how you'd use this feature
       placeholder: |
-        omnihost new-command server01 --option value
+        remotex new-command server01 --option value
       render: shell
 
   - type: checkboxes

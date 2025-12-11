@@ -11,8 +11,8 @@ from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 
-from omnihost.config import CONFIG_DIR
-from omnihost.utils import console
+from remotex.config import CONFIG_DIR
+from remotex.utils import console
 
 app = typer.Typer(name="tunnel", help="Manage SSH tunnels")
 
@@ -69,7 +69,7 @@ def tunnel_create(
         raise typer.Exit(1)
     
     # Get SSH config for host
-    from omnihost.ssh_config import parse_ssh_config
+    from remotex.ssh_config import parse_ssh_config
     host_config = parse_ssh_config(host)
     
     if not host_config:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate man pages from OmniHost command docstrings
+Generate man pages from RemoteX command docstrings
 """
 
 import os
@@ -11,7 +11,7 @@ from datetime import datetime
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from omnihost import __version__, __author__
+from remotex import __version__, __author__
 
 
 def escape_man_text(text: str) -> str:
@@ -25,11 +25,11 @@ def generate_man_page(command_name: str, description: str, synopsis: str,
     
     date = datetime.now().strftime("%B %Y")
     
-    man_page = f""".TH OMNIHOST "{command_name}" "1" "{date}" "OmniHost {__version__}" "User Commands"
+    man_page = f""".TH REMOTEX "{command_name}" "1" "{date}" "RemoteX {__version__}" "User Commands"
 .SH NAME
-omnihost-{command_name} \\- {description}
+remotex-{command_name} \\- {description}
 .SH SYNOPSIS
-.B omnihost {synopsis}
+.B remotex {synopsis}
 .SH DESCRIPTION
 {escape_man_text(description)}
 """
@@ -47,7 +47,7 @@ omnihost-{command_name} \\- {description}
     man_page += f""".SH AUTHOR
 {__author__}
 .SH "SEE ALSO"
-.BR omnihost (1)
+.BR remotex (1)
 """
     
     return man_page
@@ -58,17 +58,17 @@ def main():
     man_dir = Path(__file__).parent.parent / "man" / "man1"
     man_dir.mkdir(parents=True, exist_ok=True)
     
-    # Main omnihost man page
-    main_man = f""".TH OMNIHOST "1" "{datetime.now().strftime('%B %Y')}" "OmniHost {__version__}" "User Commands"
+    # Main remotex man page
+    main_man = f""".TH REMOTEX "1" "{datetime.now().strftime('%B %Y')}" "RemoteX {__version__}" "User Commands"
 .SH NAME
-omnihost \\- High-Performance SSH Management CLI
+remotex \\- High-Performance SSH Management CLI
 .SH SYNOPSIS
-.B omnihost
+.B remotex
 .RI [ OPTIONS ]
 .RI [ COMMAND ]
 .RI [ ARGS ]
 .SH DESCRIPTION
-OmniHost is a high-performance command-line tool for managing SSH servers and executing commands remotely. It supports parallel execution, server groups, command aliases, and more.
+RemoteX is a high-performance command-line tool for managing SSH servers and executing commands remotely. It supports parallel execution, server groups, command aliases, and more.
 .SH OPTIONS
 .TP
 .BI \\-v ", " \\-\\-verbose
@@ -114,28 +114,28 @@ Manage SSH tunnels
 .PP
 List all servers:
 .RS
-.B omnihost list
+.B remotex list
 .RE
 .PP
 Execute command on server:
 .RS
-.B omnihost exec web01 "uptime"
+.B remotex exec web01 "uptime"
 .RE
 .PP
 Execute on all servers in parallel:
 .RS
-.B omnihost exec-all "df -h" --parallel 10
+.B remotex exec-all "df -h" --parallel 10
 .RE
 .SH AUTHOR
 {__author__}
 .SH "SEE ALSO"
-Full documentation: https://github.com/sagarmemane135/omnihost
+Full documentation: https://github.com/sagarmemane135/remotex
 """
     
-    with open(man_dir / "omnihost.1", "w") as f:
+    with open(man_dir / "remotex.1", "w") as f:
         f.write(main_man)
     
-    print(f"✓ Generated man page: {man_dir / 'omnihost.1'}")
+    print(f"✓ Generated man page: {man_dir / 'remotex.1'}")
     print(f"\nTo install man pages:")
     print(f"  sudo cp -r man/* /usr/share/man/")
     print(f"  sudo mandb")

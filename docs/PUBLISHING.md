@@ -1,6 +1,6 @@
-# 📦 Publishing OmniHost to PyPI
+# 📦 Publishing RemoteX to PyPI
 
-This guide covers publishing OmniHost to PyPI using both traditional methods and modern Trusted Publishing (recommended).
+This guide covers publishing RemoteX to PyPI using both traditional methods and modern Trusted Publishing (recommended).
 
 ## Quick Start
 
@@ -21,12 +21,12 @@ Trusted Publishing uses OpenID Connect (OIDC) to allow GitHub Actions to publish
 ## Prerequisites
 
 1. A PyPI account: https://pypi.org/account/register/
-2. Repository: https://github.com/sagarmemane135/omnihost
+2. Repository: https://github.com/sagarmemane135/remotex
 3. Admin access to the GitHub repository
 
 ## Step 1: Configure Pending Publisher on PyPI
 
-Since the `omnihost` package doesn't exist on PyPI yet, you need to add a "pending publisher":
+Since the `remotex` package doesn't exist on PyPI yet, you need to add a "pending publisher":
 
 ### Go to PyPI Pending Publishers Page:
 👉 https://pypi.org/manage/account/publishing/
@@ -35,9 +35,9 @@ Since the `omnihost` package doesn't exist on PyPI yet, you need to add a "pendi
 
 | Field | Value |
 |-------|-------|
-| **PyPI Project Name** | `omnihost` |
+| **PyPI Project Name** | `remotex` |
 | **Owner** | `sagarmemane135` |
-| **Repository name** | `omnihost` |
+| **Repository name** | `remotex` |
 | **Workflow name** | `publish-to-pypi.yml` |
 | **Environment name** | `pypi` |
 
@@ -52,7 +52,7 @@ Since the `omnihost` package doesn't exist on PyPI yet, you need to add a "pendi
 
 ### 2.1 Create PyPI Environment (Production)
 
-1. Go to: https://github.com/sagarmemane135/omnihost/settings/environments
+1. Go to: https://github.com/sagarmemane135/remotex/settings/environments
 2. Click **"New environment"**
 3. Name: `pypi`
 4. **Environment protection rules** (recommended):
@@ -79,9 +79,9 @@ To test the workflow before publishing to production PyPI:
 
 | Field | Value |
 |-------|-------|
-| **PyPI Project Name** | `omnihost` |
+| **PyPI Project Name** | `remotex` |
 | **Owner** | `sagarmemane135` |
-| **Repository name** | `omnihost` |
+| **Repository name** | `remotex` |
 | **Workflow name** | `publish-to-pypi.yml` |
 | **Environment name** | `testpypi` |
 
@@ -110,7 +110,7 @@ environment:
 
 ### Option A: Test with Manual Trigger First
 
-1. Go to: https://github.com/sagarmemane135/omnihost/actions
+1. Go to: https://github.com/sagarmemane135/remotex/actions
 2. Click on **"Publish to PyPI"** workflow
 3. Click **"Run workflow"**
 4. Select branch: `main`
@@ -124,7 +124,7 @@ This will:
 
 ### Option B: Test with GitHub Release
 
-1. Go to: https://github.com/sagarmemane135/omnihost/releases
+1. Go to: https://github.com/sagarmemane135/remotex/releases
 2. Click **"Draft a new release"**
 3. Tag version: `v1.0.0`
 4. Release title: `v1.0.0 - Initial Release`
@@ -135,7 +135,7 @@ This automatically triggers the workflow.
 
 ## Step 6: Monitor the Workflow
 
-1. Go to: https://github.com/sagarmemane135/omnihost/actions
+1. Go to: https://github.com/sagarmemane135/remotex/actions
 2. Click on the running workflow
 3. Watch the build and publish steps
 4. If you set up reviewers, approve the deployment
@@ -143,12 +143,12 @@ This automatically triggers the workflow.
 ## Step 7: Verify Publication
 
 ### Check PyPI:
-👉 https://pypi.org/project/omnihost/
+👉 https://pypi.org/project/remotex/
 
 ### Test Installation:
 ```bash
-pip install omnihost
-omnihost --version
+pip install remotex
+remotex --version
 ```
 
 ## Troubleshooting
@@ -169,7 +169,7 @@ omnihost --version
 
 ### Workflow doesn't trigger
 - Ensure workflow file is on `main` branch
-- Check: https://github.com/sagarmemane135/omnihost/actions
+- Check: https://github.com/sagarmemane135/remotex/actions
 - Verify workflow file is in `.github/workflows/` directory
 
 ## Future Releases
@@ -191,7 +191,7 @@ Once set up, publishing new versions is simple:
    ```
 
 4. **Create GitHub release**:
-   - Go to https://github.com/sagarmemane135/omnihost/releases/new
+   - Go to https://github.com/sagarmemane135/remotex/releases/new
    - Tag: `v1.0.1`
    - Title: `v1.0.1 - [Brief description]`
    - Description: Copy from CHANGELOG
@@ -216,10 +216,10 @@ No tokens, no passwords, completely automated!
 |------|-----|
 | PyPI Pending Publishers | https://pypi.org/manage/account/publishing/ |
 | TestPyPI Pending Publishers | https://test.pypi.org/manage/account/publishing/ |
-| GitHub Environments | https://github.com/sagarmemane135/omnihost/settings/environments |
-| GitHub Actions | https://github.com/sagarmemane135/omnihost/actions |
-| GitHub Releases | https://github.com/sagarmemane135/omnihost/releases |
-| Published Package | https://pypi.org/project/omnihost/ |
+| GitHub Environments | https://github.com/sagarmemane135/remotex/settings/environments |
+| GitHub Actions | https://github.com/sagarmemane135/remotex/actions |
+| GitHub Releases | https://github.com/sagarmemane135/remotex/releases |
+| Published Package | https://pypi.org/project/remotex/ |
 
 ---
 
@@ -247,8 +247,8 @@ python -m build
 ```
 
 This creates:
-- `dist/omnihost-1.0.0.tar.gz` (source distribution)
-- `dist/omnihost-1.0.0-py3-none-any.whl` (wheel distribution)
+- `dist/remotex-1.0.0.tar.gz` (source distribution)
+- `dist/remotex-1.0.0-py3-none-any.whl` (wheel distribution)
 
 ### Upload to TestPyPI (Recommended First)
 
@@ -286,11 +286,11 @@ python -m twine upload dist/*
 
 ```bash
 # Check on PyPI
-https://pypi.org/project/omnihost/
+https://pypi.org/project/remotex/
 
 # Install and test
-pip install omnihost
-omnihost --version
+pip install remotex
+remotex --version
 ```
 
 ### Updating the Package
@@ -327,7 +327,7 @@ twine upload --repository testpypi dist/*
 twine upload dist/*
 
 # Install from PyPI
-pip install omnihost
+pip install remotex
 ```
 
 ---
@@ -340,7 +340,7 @@ pip install omnihost
 
 ### Import Errors After Installation
 - Check `[project.scripts]` in `pyproject.toml`
-- Verify entry point: `omnihost = "omnihost.cli:main"`
+- Verify entry point: `remotex = "remotex.cli:main"`
 
 ### Missing Dependencies
 - Ensure all dependencies are listed in `dependencies` array

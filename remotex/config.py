@@ -1,5 +1,5 @@
 """
-OmniHost Configuration Module
+RemoteX Configuration Module
 Handles user preferences like default server, output mode, etc.
 Supports environment variables for configuration.
 """
@@ -9,11 +9,11 @@ import os
 from pathlib import Path
 from typing import Optional, Dict, Tuple, List
 
-CONFIG_DIR = Path.home() / ".omnihost"
+CONFIG_DIR = Path.home() / ".remotex"
 CONFIG_FILE = CONFIG_DIR / "config.json"
 
 # Environment variable prefixes
-ENV_PREFIX = "OMNIHOST_"
+ENV_PREFIX = "REMOTEX_"
 
 
 def ensure_config_dir():
@@ -300,12 +300,12 @@ def validate_config() -> Tuple[bool, List[str]]:
         # Validate default_server exists (if set)
         default_server = config.get("default_server")
         if default_server:
-            from omnihost.ssh_config import host_exists
+            from remotex.ssh_config import host_exists
             if not host_exists(default_server):
                 errors.append(f"Default server '{default_server}' not found in SSH config")
         
         # Validate groups reference existing servers
-        from omnihost.ssh_config import get_all_hosts
+        from remotex.ssh_config import get_all_hosts
         all_hosts = {h['alias'] for h in get_all_hosts()}
         groups = config.get("groups", {})
         for group_name, servers in groups.items():

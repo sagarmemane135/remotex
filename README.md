@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 OmniHost
+# 🚀 RemoteX
 
 ### High-Performance SSH Management CLI for DevOps Engineers
 
@@ -21,76 +21,76 @@ Manage hundreds of servers with lightning-fast parallel execution, beautiful CLI
 
 ```bash
 # Quick start
-omnihost --version              # Check version
-omnihost examples               # See usage examples
+remotex --version              # Check version
+remotex examples               # See usage examples
 
 # Server Groups - organize your infrastructure
-omnihost group add web web01 web02 web03
-omnihost exec-group web "systemctl restart nginx"
-omnihost exec-group web "uptime" --dry-run  # Preview first!
+remotex group add web web01 web02 web03
+remotex exec-group web "systemctl restart nginx"
+remotex exec-group web "uptime" --dry-run  # Preview first!
 
 # Command Aliases - reduce repetitive typing
-omnihost alias add restart-nginx "sudo systemctl restart nginx"
-omnihost exec-group web restart-nginx
+remotex alias add restart-nginx "sudo systemctl restart nginx"
+remotex exec-group web restart-nginx
 
 # File Transfer - push/pull files easily
-omnihost push web01 ./app.tar /opt/app/
-omnihost pull db01 /var/log/mysql.log ./logs/
-omnihost push web01 ./dist /var/www/ --recursive
+remotex push web01 ./app.tar /opt/app/
+remotex pull db01 /var/log/mysql.log ./logs/
+remotex push web01 ./dist /var/www/ --recursive
 
 # Execute on all servers in parallel - 10x faster, with retry & dry-run
-omnihost exec-all "systemctl status nginx" --parallel 10 --retries 2 --dry-run
-omnihost exec-all "uptime" --json | jq '.succeeded'  # CI/CD integration
+remotex exec-all "systemctl status nginx" --parallel 10 --retries 2 --dry-run
+remotex exec-all "uptime" --json | jq '.succeeded'  # CI/CD integration
 
 # Production-ready output modes for DevOps automation
-omnihost exec-all "hostname" --json       # Pure JSON (pipe to jq)
-omnihost exec-all "uptime" --csv          # CSV for spreadsheets
-omnihost exec-all "df -h" --quiet         # Minimal scriptable output
-omnihost exec-all "ps aux" --compact      # Condensed single-line
-omnihost exec-all "systemctl status nginx" --plain  # No colors/formatting
+remotex exec-all "hostname" --json       # Pure JSON (pipe to jq)
+remotex exec-all "uptime" --csv          # CSV for spreadsheets
+remotex exec-all "df -h" --quiet         # Minimal scriptable output
+remotex exec-all "ps aux" --compact      # Condensed single-line
+remotex exec-all "systemctl status nginx" --plain  # No colors/formatting
 
 # Quick DevOps shortcuts - no need to type full exec commands
-omnihost uptime  # Uses default server
-omnihost disk web01
-omnihost memory db01
+remotex uptime  # Uses default server
+remotex disk web01
+remotex memory db01
 
 # Beautiful, formatted output with Rich library
-omnihost list  # Stunning table view of all servers
+remotex list  # Stunning table view of all servers
 
 # Enhanced logging for troubleshooting
-omnihost --verbose exec web01 "ls -la"
-omnihost --debug exec-all "uptime"
+remotex --verbose exec web01 "ls -la"
+remotex --debug exec-all "uptime"
 
 # Audit logging - all commands tracked automatically
-cat ~/.omnihost/audit.log  # JSON audit trail
+cat ~/.remotex/audit.log  # JSON audit trail
 
 # Command History - track and replay commands
-omnihost history                    # List recent commands
-omnihost history show 42            # Show command details
-omnihost history replay 42          # Replay a command
+remotex history                    # List recent commands
+remotex history show 42            # Show command details
+remotex history replay 42          # Replay a command
 
 # SSH Tunnels - port forwarding made easy
-omnihost tunnel create web01 8080 --remote-port 80
-omnihost tunnel list                 # List active tunnels
-omnihost tunnel stop web01 8080     # Stop a tunnel
+remotex tunnel create web01 8080 --remote-port 80
+remotex tunnel list                 # List active tunnels
+remotex tunnel stop web01 8080     # Stop a tunnel
 
 # Jump Hosts - access private servers through bastions
-omnihost add private-server -h 10.0.0.5 --jump-host bastion
+remotex add private-server -h 10.0.0.5 --jump-host bastion
 
 # Performance Profiling - optimize your operations
-omnihost profile list                # List profile files
-omnihost profile show profile.prof   # Analyze performance
+remotex profile list                # List profile files
+remotex profile show profile.prof   # Analyze performance
 ```
 
-## 🎯 Why OmniHost?
+## 🎯 Why RemoteX?
 
-| Problem | Traditional Approach | OmniHost |
+| Problem | Traditional Approach | RemoteX |
 |---------|---------------------|----------|
 | Check 20 servers | 20 × 3s = 60 seconds | 12 seconds (parallel) |
-| Type repetitive commands | `ssh user@host 'uptime'` | `omnihost uptime` |
-| Manage server configs | Edit `~/.ssh/config` manually | Interactive `omnihost add` |
+| Type repetitive commands | `ssh user@host 'uptime'` | `remotex uptime` |
+| Manage server configs | Edit `~/.ssh/config` manually | Interactive `remotex add` |
 | View command output | Plain text | Beautiful formatted panels |
-| Execute on multiple servers | Write bash loops | `omnihost exec-all` |
+| Execute on multiple servers | Write bash loops | `remotex exec-all` |
 
 ## ✨ Features
 
@@ -123,8 +123,8 @@ omnihost profile show profile.prof   # Analyze performance
 - **Audit logging** - All commands tracked automatically
 
 ### ⚙️ Configuration Management
-- **Environment variables** - Configure via `OMNIHOST_*` env vars
-- **Config validation** - `omnihost config validate`
+- **Environment variables** - Configure via `REMOTEX_*` env vars
+- **Config validation** - `remotex config validate`
 - **Config export/import** - Backup and restore configurations
 - **Default server** - Set once, use everywhere
 - **Server groups** - Organize servers logically
@@ -134,26 +134,26 @@ omnihost profile show profile.prof   # Analyze performance
 
 ### From PyPI (Recommended)
 ```bash
-pip install omnihost
+pip install remotex
 ```
 
 **Note:** After installation, you may want to install man pages:
 ```bash
 # Linux/Mac (requires sudo for system-wide)
-sudo python -m omnihost.install_man_pages
+sudo python -m remotex.install_man_pages
 
 # Or user-specific (no sudo needed)
-python -m omnihost.install_man_pages
+python -m remotex.install_man_pages
 ```
 
-Then you can use: `man omnihost`
+Then you can use: `man remotex`
 
 ### From Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/sagar.memane/omnihost.git
-cd omnihost
+git clone https://github.com/sagar.memane/remotex.git
+cd remotex
 
 # Create virtual environment (recommended)
 python3 -m venv venv
@@ -174,68 +174,68 @@ pip install -e .
 ### 1. Add Your First Server
 
 ```bash
-omnihost add
+remotex add
 # Follow interactive prompts
 ```
 
 Or use command-line options:
 ```bash
-omnihost add -a web01 -h 192.168.1.100 -u ubuntu --key ~/.ssh/id_rsa
+remotex add -a web01 -h 192.168.1.100 -u ubuntu --key ~/.ssh/id_rsa
 ```
 
 ### 2. List Servers
 
 ```bash
-omnihost list           # Basic view
-omnihost list -v        # Verbose with SSH keys
+remotex list           # Basic view
+remotex list -v        # Verbose with SSH keys
 ```
 
 ### 3. Set Default Server (Optional)
 
 ```bash
-omnihost config set-default web01
-# Now you can use: omnihost uptime (without specifying server)
+remotex config set-default web01
+# Now you can use: remotex uptime (without specifying server)
 
 # Or use environment variable:
-export OMNIHOST_DEFAULT_SERVER=web01
+export REMOTEX_DEFAULT_SERVER=web01
 ```
 
 ### 4. Execute Commands
 
 ```bash
 # Single server
-omnihost exec web01 "df -h"
+remotex exec web01 "df -h"
 
 # All servers (parallel)
-omnihost exec-all "uptime"
+remotex exec-all "uptime"
 
 # Specific servers
-omnihost exec-multi "web01,web02,db01" "systemctl status nginx"
+remotex exec-multi "web01,web02,db01" "systemctl status nginx"
 
 # Production-ready output modes
-omnihost exec-all "hostname" --json        # Pure JSON for parsing
-omnihost exec-all "uptime" --csv           # CSV for reports
-omnihost exec-all "df -h" --quiet          # Minimal for scripts
-omnihost exec-all "ps aux" --plain         # No ANSI colors
-omnihost exec-all "ls -la" --compact       # One line per server
-omnihost exec-all "uptime" --show-output   # Show detailed output (opt-in)
+remotex exec-all "hostname" --json        # Pure JSON for parsing
+remotex exec-all "uptime" --csv           # CSV for reports
+remotex exec-all "df -h" --quiet          # Minimal for scripts
+remotex exec-all "ps aux" --plain         # No ANSI colors
+remotex exec-all "ls -la" --compact       # One line per server
+remotex exec-all "uptime" --show-output   # Show detailed output (opt-in)
 ```
 
 ### 5. Quick DevOps Commands
 
 ```bash
-omnihost uptime web01          # Quick uptime
-omnihost disk web01            # Disk usage
-omnihost memory web01          # Memory usage
-omnihost processes web01       # Top processes
-omnihost status web01 nginx    # Service status
-omnihost logs web01 nginx      # View logs
+remotex uptime web01          # Quick uptime
+remotex disk web01            # Disk usage
+remotex memory web01          # Memory usage
+remotex processes web01       # Top processes
+remotex status web01 nginx    # Service status
+remotex logs web01 nginx      # View logs
 ```
 
 ### 6. Interactive Shell
 
 ```bash
-omnihost connect web01
+remotex connect web01
 # Full PTY support - run vim, htop, top, etc.
 ```
 
@@ -243,16 +243,16 @@ omnihost connect web01
 
 ### Output Modes for DevOps Automation
 
-OmniHost provides multiple output formats optimized for different use cases:
+RemoteX provides multiple output formats optimized for different use cases:
 
 | Mode | Flag | Use Case | Example |
 |------|------|----------|----------|
-| **JSON** | `--json` | CI/CD pipelines, parsing with jq | `omnihost exec-all 'cmd' --json \| jq` |
-| **CSV** | `--csv` | Spreadsheets, reports, analytics | `omnihost exec-all 'cmd' --csv > report.csv` |
-| **Quiet** | `--quiet`, `-q` | Shell scripts, log files | `omnihost exec-all 'cmd' --quiet` |
-| **Plain** | `--plain` | Legacy systems, plain text logs | `omnihost exec-all 'cmd' --plain` |
-| **Compact** | `--compact` | Quick checks, condensed output | `omnihost exec-all 'cmd' --compact` |
-| **Default** | (none) | Interactive use, rich formatting | `omnihost exec-all 'cmd'` |
+| **JSON** | `--json` | CI/CD pipelines, parsing with jq | `remotex exec-all 'cmd' --json \| jq` |
+| **CSV** | `--csv` | Spreadsheets, reports, analytics | `remotex exec-all 'cmd' --csv > report.csv` |
+| **Quiet** | `--quiet`, `-q` | Shell scripts, log files | `remotex exec-all 'cmd' --quiet` |
+| **Plain** | `--plain` | Legacy systems, plain text logs | `remotex exec-all 'cmd' --plain` |
+| **Compact** | `--compact` | Quick checks, condensed output | `remotex exec-all 'cmd' --compact` |
+| **Default** | (none) | Interactive use, rich formatting | `remotex exec-all 'cmd'` |
 
 **Key Features:**
 - `--json` outputs pure JSON (no decorative panels) - perfect for piping to `jq`
@@ -265,51 +265,51 @@ OmniHost provides multiple output formats optimized for different use cases:
 **Examples:**
 ```bash
 # Parse JSON in CI/CD pipeline
-omnihost exec-all 'hostname' --json | jq -r '.results[].output'
+remotex exec-all 'hostname' --json | jq -r '.results[].output'
 
 # Export to spreadsheet
-omnihost exec-all 'uptime' --csv > server_uptime.csv
+remotex exec-all 'uptime' --csv > server_uptime.csv
 
 # Shell script integration
-for server in $(omnihost exec-all 'hostname' --quiet | grep '✓' | cut -d: -f1); do
+for server in $(remotex exec-all 'hostname' --quiet | grep '✓' | cut -d: -f1); do
   echo "Processing $server"
 done
 
 # Clean logs without colors
-omnihost exec-all 'systemctl status nginx' --plain >> audit.log
+remotex exec-all 'systemctl status nginx' --plain >> audit.log
 
 # Quick status check
-omnihost exec-all 'df -h /' --compact
+remotex exec-all 'df -h /' --compact
 ```
 
 ### Environment Variables
 
-OmniHost supports configuration via environment variables (takes precedence over config file):
+RemoteX supports configuration via environment variables (takes precedence over config file):
 
 ```bash
-export OMNIHOST_DEFAULT_SERVER=web01
-export OMNIHOST_OUTPUT_MODE=compact
-export OMNIHOST_PARALLEL=10
-export OMNIHOST_TIMEOUT=60
-export OMNIHOST_AUDIT_ENABLED=true
+export REMOTEX_DEFAULT_SERVER=web01
+export REMOTEX_OUTPUT_MODE=compact
+export REMOTEX_PARALLEL=10
+export REMOTEX_TIMEOUT=60
+export REMOTEX_AUDIT_ENABLED=true
 ```
 
 ### Config Management
 
 ```bash
 # Show current configuration
-omnihost config show
+remotex config show
 
 # Validate configuration
-omnihost config validate
+remotex config validate
 
 # Export configuration (backup)
-omnihost config export
-omnihost config export --output my-config.json
+remotex config export
+remotex config export --output my-config.json
 
 # Import configuration (restore)
-omnihost config import my-config.json
-omnihost config import my-config.json --merge  # Merge with existing
+remotex config import my-config.json
+remotex config import my-config.json --merge  # Merge with existing
 ```
 
 ## 📖 Documentation
@@ -328,16 +328,16 @@ omnihost config import my-config.json --merge  # Merge with existing
 ### Daily Operations
 ```bash
 # Morning health check
-omnihost exec-all "uptime && free -h" --parallel 10
+remotex exec-all "uptime && free -h" --parallel 10
 
 # Check disk space across infrastructure
-omnihost exec-all "df -h /" --compact | grep "9[0-9]%"
+remotex exec-all "df -h /" --compact | grep "9[0-9]%"
 
 # Export server inventory to CSV
-omnihost exec-all "hostname && cat /etc/os-release | grep PRETTY_NAME" --csv > inventory.csv
+remotex exec-all "hostname && cat /etc/os-release | grep PRETTY_NAME" --csv > inventory.csv
 
 # Quick status check in shell script
-if omnihost exec-all 'systemctl is-active nginx' --quiet | grep -q '✗'; then
+if remotex exec-all 'systemctl is-active nginx' --quiet | grep -q '✗'; then
   echo "Alert: Some servers have nginx down!"
 fi
 ```
@@ -345,28 +345,28 @@ fi
 ### Deployments
 ```bash
 # Deploy to web servers
-omnihost exec-multi "web01,web02,web03" \
+remotex exec-multi "web01,web02,web03" \
   "cd /app && git pull && systemctl restart app" --parallel 3
 
 # Verify deployment
-omnihost exec-multi "web01,web02,web03" "curl -s localhost/health"
+remotex exec-multi "web01,web02,web03" "curl -s localhost/health"
 ```
 
 ### Troubleshooting
 ```bash
 # Quick diagnostics
-omnihost memory prod01
-omnihost processes prod01
-omnihost logs prod01 nginx -n 100
+remotex memory prod01
+remotex processes prod01
+remotex logs prod01 nginx -n 100
 
 # Check all servers for issues
-omnihost exec-all "systemctl is-failed --quiet || echo 'Services OK'"
+remotex exec-all "systemctl is-failed --quiet || echo 'Services OK'"
 ```
 
 ## 🏗️ Project Structure
 
 ```
-omnihost/
+remotex/
 ├── __init__.py              # Package metadata  
 ├── cli.py                   # CLI entry point
 ├── config.py                # Configuration management
@@ -387,20 +387,20 @@ omnihost/
 ### Server Management
 | Command | Description | Example |
 |---------|-------------|---------|
-| `list` | Show all configured servers | `omnihost list -v` |
-| `add` | Add a new server | `omnihost add -a web01 -h 1.2.3.4 -u ubuntu` |
-| `info` | Show server details | `omnihost info myserver` |
-| `edit` | Edit server configuration | `omnihost edit myserver` |
-| `remove` | Remove a server | `omnihost remove myserver` |
+| `list` | Show all configured servers | `remotex list -v` |
+| `add` | Add a new server | `remotex add -a web01 -h 1.2.3.4 -u ubuntu` |
+| `info` | Show server details | `remotex info myserver` |
+| `edit` | Edit server configuration | `remotex edit myserver` |
+| `remove` | Remove a server | `remotex remove myserver` |
 
 ### Execution
 | Command | Description | Example |
 |---------|-------------|----------|
-| `exec` | Execute command on server | `omnihost exec myserver "ls -la"` |
-| `connect` | Open interactive shell | `omnihost connect myserver` |
-| `exec-all` | Execute on all servers | `omnihost exec-all "uptime" --parallel 10` |
-| `exec-multi` | Execute on specific servers | `omnihost exec-multi "web01,web02" "df -h"` |
-| `exec-group` | Execute on server group | `omnihost exec-group web "systemctl restart nginx"` |
+| `exec` | Execute command on server | `remotex exec myserver "ls -la"` |
+| `connect` | Open interactive shell | `remotex connect myserver` |
+| `exec-all` | Execute on all servers | `remotex exec-all "uptime" --parallel 10` |
+| `exec-multi` | Execute on specific servers | `remotex exec-multi "web01,web02" "df -h"` |
+| `exec-group` | Execute on server group | `remotex exec-group web "systemctl restart nginx"` |
 
 **Output Mode Flags** (available for all bulk commands):
 - `--json` - Pure JSON output for parsing
@@ -413,22 +413,22 @@ omnihost/
 ### Configuration
 | Command | Description | Example |
 |---------|-------------|---------|
-| `config show` | Show configuration | `omnihost config show` |
-| `config set-default` | Set default server | `omnihost config set-default web01` |
-| `config validate` | Validate configuration | `omnihost config validate` |
-| `config export` | Export configuration | `omnihost config export` |
-| `config import` | Import configuration | `omnihost config import backup.json` |
+| `config show` | Show configuration | `remotex config show` |
+| `config set-default` | Set default server | `remotex config set-default web01` |
+| `config validate` | Validate configuration | `remotex config validate` |
+| `config export` | Export configuration | `remotex config export` |
+| `config import` | Import configuration | `remotex config import backup.json` |
 
 ### Groups & Aliases
 | Command | Description | Example |
 |---------|-------------|---------|
-| `group add` | Create server group | `omnihost group add web web01 web02` |
-| `alias add` | Create command alias | `omnihost alias add restart-nginx "sudo systemctl restart nginx"` |
+| `group add` | Create server group | `remotex group add web web01 web02` |
+| `alias add` | Create command alias | `remotex alias add restart-nginx "sudo systemctl restart nginx"` |
 
 
 ## 📝 SSH Config
 
-OmniHost works with standard SSH config format:
+RemoteX works with standard SSH config format:
 
 ```
 Host myserver
@@ -443,7 +443,7 @@ Host production
     IdentityFile ~/.ssh/prod_key
 ```
 
-OmniHost can create and manage this file for you!
+RemoteX can create and manage this file for you!
 
 ## 🤝 Contributing
 
@@ -453,8 +453,8 @@ We welcome contributions! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for det
 
 ```bash
 # Fork and clone the repository
-git clone https://github.com/YOUR_USERNAME/omnihost.git
-cd omnihost
+git clone https://github.com/YOUR_USERNAME/remotex.git
+cd remotex
 
 # Set up development environment
 python3 -m venv venv
@@ -501,8 +501,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📮 Support
 
-- **Issues**: [GitHub Issues](https://github.com/sagar.memane/omnihost/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/sagar.memane/omnihost/discussions)
+- **Issues**: [GitHub Issues](https://github.com/sagar.memane/remotex/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/sagar.memane/remotex/discussions)
 - **Security**: See [SECURITY.md](SECURITY.md) for reporting vulnerabilities
 
 ## 🗺️ Roadmap
@@ -542,7 +542,7 @@ See [Feature Roadmap](docs/FEATURE_ROADMAP.md) for detailed information.
 ```bash
 source venv/bin/activate  # Activate virtual environment
 pip install -e .  # Reinstall if needed
-which omnihost  # Should show path in venv
+which remotex  # Should show path in venv
 ```
 
 ### Connection issues
@@ -551,7 +551,7 @@ which omnihost  # Should show path in venv
 ssh -F ~/.ssh/config myserver
 
 # Check server configuration
-omnihost info myserver
+remotex info myserver
 ```
 
 ### Permission errors with SSH keys
@@ -563,20 +563,20 @@ chmod 700 ~/.ssh
 ### Slow bulk operations
 ```bash
 # Increase parallelism (default is 5)
-omnihost exec-all "uptime" --parallel 10
+remotex exec-all "uptime" --parallel 10
 
 # Reduce timeout for faster failure detection
-omnihost exec-all "ping -c 1 google.com" --timeout 5
+remotex exec-all "ping -c 1 google.com" --timeout 5
 ```
 
 ---
 
 <div align="center">
 
-**[⬆ back to top](#-omnihost)**
+**[⬆ back to top](#-remotex)**
 
 Made with ❤️ for DevOps Engineers
 
-If you find OmniHost useful, please ⭐ star this repository!
+If you find RemoteX useful, please ⭐ star this repository!
 
 </div>

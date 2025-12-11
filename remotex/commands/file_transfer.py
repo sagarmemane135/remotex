@@ -1,5 +1,5 @@
 """
-OmniHost File Transfer Commands
+RemoteX File Transfer Commands
 Push and pull files using SFTP
 """
 
@@ -11,8 +11,8 @@ from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TransferSpeedColumn, DownloadColumn
 from rich import box
 
-from omnihost.ssh_config import parse_ssh_config
-from omnihost.ssh_client import create_ssh_client
+from remotex.ssh_config import parse_ssh_config
+from remotex.ssh_client import create_ssh_client
 
 console = Console()
 
@@ -33,9 +33,9 @@ def push(
     Push (upload) files to a remote server using SFTP.
     
     Example:
-        omnihost push web01 ./app.tar /opt/app/
-        omnihost push db01 ./config.json /etc/myapp/
-        omnihost push web01 ./dist /var/www/ --recursive
+        remotex push web01 ./app.tar /opt/app/
+        remotex push db01 ./config.json /etc/myapp/
+        remotex push web01 ./dist /var/www/ --recursive
     """
     # Validate local path
     local = Path(local_path)
@@ -116,9 +116,9 @@ def pull(
     Pull (download) files from a remote server using SFTP.
     
     Example:
-        omnihost pull web01 /var/log/nginx/access.log ./logs/
-        omnihost pull db01 /etc/mysql/my.cnf ./configs/
-        omnihost pull web01 /var/www/html ./backup/ --recursive
+        remotex pull web01 /var/log/nginx/access.log ./logs/
+        remotex pull db01 /etc/mysql/my.cnf ./configs/
+        remotex pull web01 /var/www/html ./backup/ --recursive
     """
     console.print(Panel(
         f"[cyan]Source:[/cyan] {host}:{remote_path}\n"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Module to install man pages after package installation
-Usage: python -m omnihost.install_man_pages
+Usage: python -m remotex.install_man_pages
 """
 
 import os
@@ -32,8 +32,8 @@ def install_man_pages():
     """Install man pages to system man directory."""
     # Find the package installation location
     try:
-        import omnihost
-        package_path = Path(omnihost.__file__).parent.parent
+        import remotex
+        package_path = Path(remotex.__file__).parent.parent
     except ImportError:
         # Fallback to current directory
         package_path = Path(__file__).parent.parent
@@ -42,7 +42,7 @@ def install_man_pages():
     possible_man_locations = [
         package_path / "man",
         Path(__file__).parent.parent / "man",
-        Path("/usr/share/omnihost/man"),
+        Path("/usr/share/remotex/man"),
     ]
     
     man_source = None
@@ -62,7 +62,7 @@ def install_man_pages():
     # Check for sudo/admin rights
     if os.geteuid() != 0 and str(man_dest).startswith("/usr"):
         print("Installing man pages to system directory requires administrator privileges.")
-        print(f"Please run: sudo python -m omnihost.install_man_pages")
+        print(f"Please run: sudo python -m remotex.install_man_pages")
         print(f"Or manually: sudo cp -r {man_source}/* {man_dest}/")
         return False
     
@@ -89,7 +89,7 @@ def install_man_pages():
                 print("Updated man database.")
         
         print(f"✓ Successfully installed {installed} man page(s)!")
-        print(f"  You can now use: man omnihost")
+        print(f"  You can now use: man remotex")
         return True
     
     except PermissionError:

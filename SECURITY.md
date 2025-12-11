@@ -11,7 +11,7 @@ We release patches for security vulnerabilities. Currently supported versions:
 
 ## Reporting a Vulnerability
 
-We take the security of OmniHost seriously. If you believe you have found a security vulnerability, please report it to us as described below.
+We take the security of RemoteX seriously. If you believe you have found a security vulnerability, please report it to us as described below.
 
 ### Please DO NOT:
 - Open a public GitHub issue
@@ -47,15 +47,15 @@ chmod 600 ~/.ssh/id_ed25519
 chmod 644 ~/.ssh/id_ed25519.pub
 
 # Never commit private keys
-# OmniHost's .gitignore already excludes common key files
+# RemoteX's .gitignore already excludes common key files
 ```
 
 ### Configuration Security
 ```bash
-# OmniHost config is stored at ~/.omnihost/config.json
+# RemoteX config is stored at ~/.remotex/config.json
 # Ensure proper permissions:
-chmod 700 ~/.omnihost
-chmod 600 ~/.omnihost/config.json
+chmod 700 ~/.remotex
+chmod 600 ~/.remotex/config.json
 
 # Review your SSH config regularly
 cat ~/.ssh/config
@@ -72,13 +72,13 @@ cat ~/.ssh/config
 ### Command Execution Safety
 ```bash
 # Avoid running untrusted commands
-omnihost exec server "$(cat untrusted_input.txt)"  # DON'T DO THIS
+remotex exec server "$(cat untrusted_input.txt)"  # DON'T DO THIS
 
 # Validate commands before bulk execution
-omnihost exec-all "dangerous_command"  # Review carefully
+remotex exec-all "dangerous_command"  # Review carefully
 
 # Use timeout to prevent hanging
-omnihost exec server "long_command" --timeout 300
+remotex exec server "long_command" --timeout 300
 ```
 
 ### Network Security
@@ -91,19 +91,19 @@ omnihost exec server "long_command" --timeout 300
 ## Known Security Considerations
 
 ### 1. SSH Config Storage
-- OmniHost reads and writes to `~/.ssh/config`
+- RemoteX reads and writes to `~/.ssh/config`
 - File permissions must be `600` or stricter
 - Config file is plain text (no encryption)
 - **Mitigation**: Never store passwords in config; use keys only
 
 ### 2. Configuration Storage
-- Default server and preferences stored at `~/.omnihost/config.json`
+- Default server and preferences stored at `~/.remotex/config.json`
 - File contains server aliases (no passwords or keys)
 - **Mitigation**: File permissions set to `600` automatically
 
 ### 3. Command Execution
 - Commands are executed as the authenticated SSH user
-- No privilege escalation is performed by OmniHost
+- No privilege escalation is performed by RemoteX
 - **Mitigation**: Review commands before bulk execution
 
 ### 4. Connection Pooling
@@ -112,8 +112,8 @@ omnihost exec server "long_command" --timeout 300
 - **Mitigation**: Implement connection timeout and cleanup
 
 ### 5. Dependencies
-- OmniHost depends on Paramiko, Typer, and Rich
-- Vulnerabilities in dependencies could affect OmniHost
+- RemoteX depends on Paramiko, Typer, and Rich
+- Vulnerabilities in dependencies could affect RemoteX
 - **Mitigation**: Keep dependencies updated
 
 ## Security Updates
@@ -126,9 +126,9 @@ Security updates will be released as patch versions (e.g., 1.0.1, 1.0.2).
 3. **Check CHANGELOG.md** regularly
 4. **Enable Dependabot alerts** (if you forked the repo)
 
-### Updating OmniHost:
+### Updating RemoteX:
 ```bash
-cd omnihost
+cd remotex
 git pull origin main
 pip install --upgrade -e .
 ```
@@ -178,7 +178,7 @@ _No vulnerabilities reported yet_
 
 For security concerns, please email: [sagar.memane@treadbinary.com]
 
-For general questions, use [GitHub Issues](https://github.com/sagar.memane/omnihost/issues).
+For general questions, use [GitHub Issues](https://github.com/sagar.memane/remotex/issues).
 
 ---
 

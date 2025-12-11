@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test runner for OmniHost
+Test runner for RemoteX
 """
 
 import unittest

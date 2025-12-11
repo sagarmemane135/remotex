@@ -1,6 +1,6 @@
 # 🗺️ Feature Roadmap
 
-This document tracks features that are **not yet implemented** in OmniHost.
+This document tracks features that are **not yet implemented** in RemoteX.
 
 ## 📋 Not Yet Implemented
 
@@ -14,9 +14,9 @@ This document tracks features that are **not yet implemented** in OmniHost.
 
 **Use Cases:**
 ```bash
-omnihost history                    # Show recent commands
-omnihost history --server web01     # Filter by server
-omnihost replay 42                  # Replay command #42
+remotex history                    # Show recent commands
+remotex history --server web01     # Filter by server
+remotex replay 42                  # Replay command #42
 ```
 
 #### 2. **SSH Tunnel Management** 🔐 ✅ IMPLEMENTED
@@ -27,9 +27,9 @@ omnihost replay 42                  # Replay command #42
 
 **Use Cases:**
 ```bash
-omnihost tunnel create web01 -L 8080:localhost:80
-omnihost tunnel list
-omnihost tunnel stop web01
+remotex tunnel create web01 -L 8080:localhost:80
+remotex tunnel list
+remotex tunnel stop web01
 ```
 
 #### 3. **Jump Host / Bastion Support** 🚪 ✅ IMPLEMENTED
@@ -39,8 +39,8 @@ omnihost tunnel stop web01
 
 **Use Cases:**
 ```bash
-omnihost add bastion -h bastion.example.com
-omnihost add private-server -h 10.0.0.5 --jump-host bastion
+remotex add bastion -h bastion.example.com
+remotex add private-server -h 10.0.0.5 --jump-host bastion
 ```
 
 ### Medium Priority Features
@@ -52,8 +52,8 @@ omnihost add private-server -h 10.0.0.5 --jump-host bastion
 
 **Use Cases:**
 ```bash
-omnihost template add deploy "cd /app && git pull && sudo systemctl restart {service}"
-omnihost template exec deploy --service nginx
+remotex template add deploy "cd /app && git pull && sudo systemctl restart {service}"
+remotex template exec deploy --service nginx
 ```
 
 #### 5. **Real-time Log Streaming** 📡
@@ -63,8 +63,8 @@ omnihost template exec deploy --service nginx
 
 **Use Cases:**
 ```bash
-omnihost stream web01 /var/log/nginx/access.log
-omnihost stream-all /var/log/app.log --filter "ERROR"
+remotex stream web01 /var/log/nginx/access.log
+remotex stream-all /var/log/app.log --filter "ERROR"
 ```
 
 #### 6. **Output Comparison Across Servers** 📊
@@ -74,7 +74,7 @@ omnihost stream-all /var/log/app.log --filter "ERROR"
 
 **Use Cases:**
 ```bash
-omnihost compare "web01,web02,web03" "cat /etc/nginx/nginx.conf"
+remotex compare "web01,web02,web03" "cat /etc/nginx/nginx.conf"
 ```
 
 ### Low Priority Features
@@ -86,18 +86,18 @@ omnihost compare "web01,web02,web03" "cat /etc/nginx/nginx.conf"
 
 **Use Cases:**
 ```bash
-omnihost cloud sync aws --region us-east-1
-omnihost cloud sync azure --resource-group production
+remotex cloud sync aws --region us-east-1
+remotex cloud sync azure --resource-group production
 ```
 
 #### 8. **Ansible Playbook Integration** 🎭
-- Execute Ansible playbooks through OmniHost
+- Execute Ansible playbooks through RemoteX
 - Integrate with existing Ansible inventories
-- Run playbooks on OmniHost server groups
+- Run playbooks on RemoteX server groups
 
 **Use Cases:**
 ```bash
-omnihost ansible deploy.yml --group web
+remotex ansible deploy.yml --group web
 ```
 
 #### 9. **Web UI** 🌐
@@ -122,7 +122,7 @@ omnihost ansible deploy.yml --group web
 - Built-in performance profiling tools
 - Identify bottlenecks in bulk operations
 - Optimization recommendations
-- Commands: `omnihost profile list/show/clean`
+- Commands: `remotex profile list/show/clean`
 
 ---
 

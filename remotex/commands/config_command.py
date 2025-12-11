@@ -1,6 +1,6 @@
 """
 Config Command Module
-Manage OmniHost configuration (default server, aliases, preferences).
+Manage RemoteX configuration (default server, aliases, preferences).
 """
 
 import typer
@@ -9,21 +9,21 @@ from rich.table import Table
 from rich.panel import Panel
 from rich import box
 
-from omnihost.config import (
+from remotex.config import (
     get_default_server, set_default_server,
     get_server_alias, set_server_alias,
     load_config, save_config,
     validate_config, export_config, import_config
 )
-from omnihost.exit_codes import ExitCode
-from omnihost.ssh_config import host_exists
+from remotex.exit_codes import ExitCode
+from remotex.ssh_config import host_exists
 
 console = Console()
 
 
 def register_config_command(app: typer.Typer):
     """Register config command and subcommands."""
-    config_app = typer.Typer(name="config", help="Manage OmniHost configuration")
+    config_app = typer.Typer(name="config", help="Manage RemoteX configuration")
     
     config_app.command(name="show")(show_config)
     config_app.command(name="set-default")(set_default)
@@ -41,7 +41,7 @@ def show_config():
     config = load_config()
     
     # Create table
-    table = Table(title="🔧 OmniHost Configuration", box=box.ROUNDED)
+    table = Table(title="🔧 RemoteX Configuration", box=box.ROUNDED)
     table.add_column("Setting", style="cyan", no_wrap=True)
     table.add_column("Value", style="green")
     
@@ -61,7 +61,7 @@ def show_config():
             table.add_row(f"  {alias}", server)
     
     console.print(table)
-    console.print("\n[dim]Config file: ~/.omnihost/config.json[/dim]")
+    console.print("\n[dim]Config file: ~/.remotex/config.json[/dim]")
 
 
 def set_default(
@@ -72,8 +72,8 @@ def set_default(
     if not host_exists(server):
         console.print(Panel(
             f"[red]Server '{server}' not found in SSH config.[/red]\n\n"
-            f"Use: [cyan]omnihost list[/cyan] to see available servers\n"
-            f"Use: [cyan]omnihost add[/cyan] to add a new server",
+            f"Use: [cyan]remotex list[/cyan] to see available servers\n"
+            f"Use: [cyan]remotex add[/cyan] to add a new server",
             title="❌ Server Not Found",
             border_style="red"
         ))
@@ -83,9 +83,9 @@ def set_default(
     console.print(Panel(
         f"[green]✓[/green] Default server set to: [bold]{server}[/bold]\n\n"
         f"Now you can use quick commands without specifying the server:\n"
-        f"  [cyan]omnihost uptime[/cyan]\n"
-        f"  [cyan]omnihost disk[/cyan]\n"
-        f"  [cyan]omnihost memory[/cyan]",
+        f"  [cyan]remotex uptime[/cyan]\n"
+        f"  [cyan]remotex disk[/cyan]\n"
+        f"  [cyan]remotex memory[/cyan]",
         title="✓ Configuration Updated",
         border_style="green",
         box=box.ROUNDED
@@ -101,7 +101,7 @@ def add_alias(
     if not host_exists(server):
         console.print(Panel(
             f"[red]Server '{server}' not found in SSH config.[/red]\n\n"
-            f"Use: [cyan]omnihost list[/cyan] to see available servers",
+            f"Use: [cyan]remotex list[/cyan] to see available servers",
             title="❌ Server Not Found",
             border_style="red"
         ))
@@ -111,8 +111,8 @@ def add_alias(
     console.print(Panel(
         f"[green]✓[/green] Alias created: [bold]{alias}[/bold] → [bold]{server}[/bold]\n\n"
         f"Now you can use:\n"
-        f"  [cyan]omnihost uptime {alias}[/cyan]\n"
-        f"  [cyan]omnihost exec {alias} \"<command>\"[/cyan]",
+        f"  [cyan]remotex uptime {alias}[/cyan]\n"
+        f"  [cyan]remotex exec {alias} \"<command>\"[/cyan]",
         title="✓ Alias Created",
         border_style="green",
         box=box.ROUNDED
@@ -128,7 +128,7 @@ def list_aliases():
         console.print(Panel(
             "[yellow]No aliases configured yet.[/yellow]\n\n"
             "Create an alias with:\n"
-            "[cyan]omnihost config alias prod my-production-server[/cyan]",
+            "[cyan]remotex config alias prod my-production-server[/cyan]",
             title="📋 Aliases",
             border_style="yellow"
         ))

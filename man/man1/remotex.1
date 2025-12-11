@@ -1,13 +1,13 @@
-.TH OMNIHOST "1" "December 2025" "OmniHost 1.0.0" "User Commands"
+.TH REMOTEX "1" "December 2025" "RemoteX 1.0.0" "User Commands"
 .SH NAME
-omnihost \- High-Performance SSH Management CLI
+remotex \- High-Performance SSH Management CLI
 .SH SYNOPSIS
-.B omnihost
+.B remotex
 .RI [ OPTIONS ]
 .RI [ COMMAND ]
 .RI [ ARGS ]
 .SH DESCRIPTION
-OmniHost is a high-performance command-line tool for managing SSH servers and executing commands remotely. It supports parallel execution, server groups, command aliases, and more.
+RemoteX is a high-performance command-line tool for managing SSH servers and executing commands remotely. It supports parallel execution, server groups, command aliases, and more.
 .SH OPTIONS
 .TP
 .BI \-v ", " \-\-verbose
@@ -53,19 +53,19 @@ Manage SSH tunnels
 .PP
 List all servers:
 .RS
-.B omnihost list
+.B remotex list
 .RE
 .PP
 Execute command on server:
 .RS
-.B omnihost exec web01 "uptime"
+.B remotex exec web01 "uptime"
 .RE
 .PP
 Execute on all servers in parallel:
 .RS
-.B omnihost exec-all "df -h" --parallel 10
+.B remotex exec-all "df -h" --parallel 10
 .RE
 .SH AUTHOR
 Sagar Memane <sagarmemane135@github.com>
 .SH "SEE ALSO"
-Full documentation: https://github.com/sagarmemane135/omnihost
+Full documentation: https://github.com/sagarmemane135/remotex

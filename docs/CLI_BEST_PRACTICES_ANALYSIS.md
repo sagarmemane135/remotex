@@ -1,6 +1,6 @@
 # 📋 CLI Best Practices
 
-This document analyzes OmniHost against industry-standard CLI best practices.
+This document analyzes RemoteX against industry-standard CLI best practices.
 
 **Status:** ✅ **All best practices implemented (10/10)**
 
@@ -15,10 +15,10 @@ This document analyzes OmniHost against industry-standard CLI best practices.
 
 ```bash
 # Our implementation follows verb-noun pattern
-omnihost list          # verb
-omnihost add           # verb
-omnihost exec          # verb
-omnihost connect       # verb
+remotex list          # verb
+remotex add           # verb
+remotex exec          # verb
+remotex connect       # verb
 ```
 
 **Strengths:**
@@ -39,7 +39,7 @@ omnihost connect       # verb
 ```python
 # cli.py has rich help text
 app = typer.Typer(
-    help="🚀 OmniHost - Manage SSH servers and execute commands remotely",
+    help="🚀 RemoteX - Manage SSH servers and execute commands remotely",
     rich_markup_mode="rich",
 )
 ```
@@ -214,20 +214,20 @@ class ExitCode:
 
 **Strengths:**
 - Uses standard SSH config (`~/.ssh/config`)
-- Custom config at `~/.omnihost/config.json`
+- Custom config at `~/.remotex/config.json`
 - Default server configuration
 
 **Status:** ✅ **ALL IMPLEMENTED**
-- ✅ Environment variable support (`OMNIHOST_*` vars)
-- ✅ Config validation (`omnihost config validate`)
-- ✅ Config export (`omnihost config export`)
-- ✅ Config import (`omnihost config import`)
+- ✅ Environment variable support (`REMOTEX_*` vars)
+- ✅ Config validation (`remotex config validate`)
+- ✅ Config export (`remotex config export`)
+- ✅ Config import (`remotex config import`)
 
 **Implementation:**
 ```python
 # config.py - Environment variable support
-ENV_PREFIX = "OMNIHOST_"
-# Supports: OMNIHOST_DEFAULT_SERVER, OMNIHOST_TIMEOUT, etc.
+ENV_PREFIX = "REMOTEX_"
+# Supports: REMOTEX_DEFAULT_SERVER, REMOTEX_TIMEOUT, etc.
 
 # config_command.py - All commands implemented
 config_app.command(name="validate")(validate)
@@ -238,14 +238,14 @@ config_app.command(name="import")(import_cmd)
 **Usage:**
 ```bash
 # Environment variables
-export OMNIHOST_DEFAULT_SERVER=web01
-export OMNIHOST_TIMEOUT=60
-export OMNIHOST_PARALLEL=10
+export REMOTEX_DEFAULT_SERVER=web01
+export REMOTEX_TIMEOUT=60
+export REMOTEX_PARALLEL=10
 
 # Config commands
-omnihost config validate
-omnihost config export
-omnihost config import config.json --merge
+remotex config validate
+remotex config export
+remotex config import config.json --merge
 ```
 
 ---
@@ -264,7 +264,7 @@ omnihost config import config.json --merge
 ```python
 # cli.py - Completion enabled
 app = typer.Typer(
-    name="omnihost",
+    name="remotex",
     add_completion=True,  # ✅ ENABLED
     rich_markup_mode="rich",
 )
@@ -273,9 +273,9 @@ app = typer.Typer(
 **Usage:**
 ```bash
 # Install completion
-omnihost --install-completion bash
-omnihost --install-completion zsh
-omnihost --install-completion fish
+remotex --install-completion bash
+remotex --install-completion zsh
+remotex --install-completion fish
 ```
 
 ---
@@ -288,7 +288,7 @@ omnihost --install-completion fish
 **Status:** ✅ **FULLY IMPLEMENTED**
 - ✅ `--verbose` / `-v` flag (cli.py line 59)
 - ✅ `--debug` mode (cli.py line 60)
-- ✅ Audit logging to file (`~/.omnihost/audit.log`)
+- ✅ Audit logging to file (`~/.remotex/audit.log`)
 - ✅ Command execution logging (`audit.py`)
 
 **Implementation:**
@@ -306,7 +306,7 @@ def main_callback(
 
 # audit.py - Command logging
 def log_command_execution(...):
-    # Logs to ~/.omnihost/audit.log
+    # Logs to ~/.remotex/audit.log
 ```
 
 ---
@@ -441,7 +441,7 @@ def exec_all(
 ### Low Priority ✅ **MOSTLY COMPLETE**
 
 9. ✅ **Command history/logging** - Audit logging implemented (audit.py)
-10. ✅ **Config validation command** - Implemented (`omnihost config validate`)
+10. ✅ **Config validation command** - Implemented (`remotex config validate`)
 11. ⚠️ **Man page generation** - Not implemented (low priority)
 12. ✅ **Examples command** - Implemented (cli.py)
 
@@ -476,7 +476,7 @@ def exec_all(
 
 All recommended features have been implemented:
 
-1. ✅ `omnihost/exit_codes.py` with standardized exit codes
+1. ✅ `remotex/exit_codes.py` with standardized exit codes
 2. ✅ `--version` flag and `version` command
 3. ✅ `--verbose` and `--debug` global flags
 4. ✅ Shell completion enabled

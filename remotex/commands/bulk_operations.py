@@ -16,9 +16,9 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskPr
 from rich import box
 from rich.live import Live
 
-from omnihost.ssh_config import get_all_hosts, parse_ssh_config
-from omnihost.ssh_client import create_ssh_client
-from omnihost.history import add_to_history
+from remotex.ssh_config import get_all_hosts, parse_ssh_config
+from remotex.ssh_client import create_ssh_client
+from remotex.history import add_to_history
 
 console = Console()
 
@@ -32,7 +32,7 @@ def register_bulk_commands(app: typer.Typer):
 
 def execute_on_host(host_alias: str, command: str, timeout: int = 30, retries: int = 0, verbose: bool = False) -> Dict:
     """Execute command on a single host and return result."""
-    from omnihost.retry import retry_with_backoff
+    from remotex.retry import retry_with_backoff
     
     def attempt_execution():
         result = {
@@ -94,10 +94,10 @@ def exec_all(
     Execute a command on ALL configured servers in parallel.
     
     Example:
-        omnihost exec-all "uptime"
-        omnihost exec-all "df -h" --parallel 10
-        omnihost exec-all "systemctl status nginx" --timeout 10
-        omnihost exec-all "rm -rf /tmp/*" --dry-run
+        remotex exec-all "uptime"
+        remotex exec-all "df -h" --parallel 10
+        remotex exec-all "systemctl status nginx" --timeout 10
+        remotex exec-all "rm -rf /tmp/*" --dry-run
     """
     hosts = get_all_hosts()
     
@@ -371,9 +371,9 @@ def exec_multi(
     Execute a command on specific servers (comma-separated list).
     
     Example:
-        omnihost exec-multi "web01,web02,web03" "systemctl restart nginx"
-        omnihost exec-multi "db01,db02" "pg_isready" --parallel 2
-        omnihost exec-multi "web01,db01" "uptime" --dry-run
+        remotex exec-multi "web01,web02,web03" "systemctl restart nginx"
+        remotex exec-multi "db01,db02" "pg_isready" --parallel 2
+        remotex exec-multi "web01,db01" "uptime" --dry-run
     """
     host_list = [h.strip() for h in hosts.split(',')]
     
@@ -615,17 +615,17 @@ def exec_group(
     Execute a command on all servers in a group.
     
     Example:
-        omnihost exec-group web "systemctl restart nginx"
-        omnihost exec-group db "pg_dump mydb" --parallel 3
-        omnihost exec-group prod "uptime" --dry-run
+        remotex exec-group web "systemctl restart nginx"
+        remotex exec-group db "pg_dump mydb" --parallel 3
+        remotex exec-group prod "uptime" --dry-run
     """
-    from omnihost import config
+    from remotex import config
     
     servers = config.get_group_servers(group_name)
     
     if not servers:
         console.print(f"[red]✗[/red] Group '[cyan]{group_name}[/cyan]' not found or empty")
-        console.print("[yellow]Use 'omnihost group list' to see available groups[/yellow]")
+        console.print("[yellow]Use 'remotex group list' to see available groups[/yellow]")
         raise typer.Exit(1)
     
     # Dry-run mode
@@ -749,7 +749,7 @@ def exec_group(
         print(json.dumps(output_data, indent=2))
         
         # Audit log
-        from omnihost.audit import log_command_execution
+        from remotex.audit import log_command_execution
         log_command_execution(
             command_type="exec-group",
             hosts=servers,
@@ -861,7 +861,7 @@ def exec_group(
             ))
     
     # Audit log
-    from omnihost.audit import log_command_execution
+    from remotex.audit import log_command_execution
     log_command_execution(
         command_type="exec-group",
         hosts=servers,

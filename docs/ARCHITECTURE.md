@@ -2,15 +2,15 @@
 
 **Version:** 1.0.0
 
-This document describes the internal architecture of OmniHost for developers and contributors.
+This document describes the internal architecture of RemoteX for developers and contributors.
 
 ---
 
 ## 📁 Project Structure
 
 ```
-omnihost/
-├── omnihost/                          # Main package
+remotex/
+├── remotex/                          # Main package
 │   ├── __init__.py                    # Package metadata & version
 │   ├── cli.py                         # CLI entry point & command registration
 │   ├── config.py                      # Configuration management (env vars, file)
@@ -52,7 +52,7 @@ omnihost/
 
 ## 🔧 Core Modules
 
-### `omnihost/__init__.py`
+### `remotex/__init__.py`
 **Purpose:** Package metadata and version information
 
 **Exports:**
@@ -63,7 +63,7 @@ omnihost/
 
 ---
 
-### `omnihost/cli.py`
+### `remotex/cli.py`
 **Purpose:** Main CLI entry point and command registration
 
 **Key Components:**
@@ -96,7 +96,7 @@ register_file_transfer_commands(app)
 
 ---
 
-### `omnihost/config.py`
+### `remotex/config.py`
 **Purpose:** Configuration management with environment variable support
 
 **Key Functions:**
@@ -110,17 +110,17 @@ register_file_transfer_commands(app)
 - `import_config()` - Import config from JSON file
 
 **Environment Variables:**
-- `OMNIHOST_DEFAULT_SERVER` - Default server name
-- `OMNIHOST_OUTPUT_MODE` - Output mode (normal/compact/silent)
-- `OMNIHOST_PARALLEL` - Default parallel connections
-- `OMNIHOST_TIMEOUT` - Default timeout in seconds
-- `OMNIHOST_AUDIT_ENABLED` - Enable/disable audit logging
+- `REMOTEX_DEFAULT_SERVER` - Default server name
+- `REMOTEX_OUTPUT_MODE` - Output mode (normal/compact/silent)
+- `REMOTEX_PARALLEL` - Default parallel connections
+- `REMOTEX_TIMEOUT` - Default timeout in seconds
+- `REMOTEX_AUDIT_ENABLED` - Enable/disable audit logging
 
-**Config File:** `~/.omnihost/config.json`
+**Config File:** `~/.remotex/config.json`
 
 ---
 
-### `omnihost/ssh_config.py`
+### `remotex/ssh_config.py`
 **Purpose:** SSH configuration file operations
 
 **Key Functions:**
@@ -136,7 +136,7 @@ register_file_transfer_commands(app)
 
 ---
 
-### `omnihost/ssh_client.py`
+### `remotex/ssh_client.py`
 **Purpose:** SSH connection management
 
 **Key Functions:**
@@ -150,7 +150,7 @@ register_file_transfer_commands(app)
 
 ---
 
-### `omnihost/exit_codes.py`
+### `remotex/exit_codes.py`
 **Purpose:** Standardized exit codes and error messages
 
 **Exit Code Categories:**
@@ -168,7 +168,7 @@ register_file_transfer_commands(app)
 
 ---
 
-### `omnihost/retry.py`
+### `remotex/retry.py`
 **Purpose:** Retry logic with exponential backoff
 
 **Key Functions:**
@@ -183,7 +183,7 @@ register_file_transfer_commands(app)
 
 ---
 
-### `omnihost/audit.py`
+### `remotex/audit.py`
 **Purpose:** Command execution audit logging
 
 **Key Functions:**
@@ -197,11 +197,11 @@ register_file_transfer_commands(app)
 - Success/failure statistics
 - Searchable audit history
 
-**File:** `~/.omnihost/audit.log`
+**File:** `~/.remotex/audit.log`
 
 ---
 
-### `omnihost/performance.py`
+### `remotex/performance.py`
 **Purpose:** Caching and optimization utilities
 
 **Key Functions:**
@@ -210,7 +210,7 @@ register_file_transfer_commands(app)
 - `clear_cache()` - Clear all cached data
 - `cached()` - Decorator for function result caching
 
-**Cache Directory:** `~/.omnihost/cache/`
+**Cache Directory:** `~/.remotex/cache/`
 
 ---
 
@@ -357,7 +357,7 @@ audit.py (log_command_execution)
 ### Configuration Loading Priority
 
 1. **Environment Variables** (highest priority)
-2. **Config File** (`~/.omnihost/config.json`)
+2. **Config File** (`~/.remotex/config.json`)
 3. **Defaults** (lowest priority)
 
 ---
@@ -394,12 +394,12 @@ Each command module is self-contained with a `register_*_commands()` function.
 
 ### Adding a New Command
 
-1. **Create command file** in `omnihost/commands/`:
+1. **Create command file** in `remotex/commands/`:
 ```python
-# omnihost/commands/my_command.py
+# remotex/commands/my_command.py
 import typer
 from rich.console import Console
-from omnihost.exit_codes import ExitCode
+from remotex.exit_codes import ExitCode
 
 console = Console()
 
@@ -422,7 +422,7 @@ def my_command(
 
 2. **Register in `cli.py`**:
 ```python
-from omnihost.commands.my_command import register_my_command
+from remotex.commands.my_command import register_my_command
 
 # In main() or after app creation
 register_my_command(app)

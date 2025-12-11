@@ -1,5 +1,5 @@
 """
-OmniHost Audit Logging
+RemoteX Audit Logging
 Track all command executions for compliance and debugging
 """
 
@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from omnihost.config import CONFIG_DIR, load_config
+from remotex.config import CONFIG_DIR, load_config
 
 AUDIT_LOG_FILE = CONFIG_DIR / "audit.log"
 

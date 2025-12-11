@@ -1,5 +1,5 @@
 """
-OmniHost Group Management Commands
+RemoteX Group Management Commands
 Manage server groups for bulk operations
 """
 
@@ -8,8 +8,8 @@ from rich.console import Console
 from rich.table import Table
 from typing import List
 
-from omnihost import config
-from omnihost.ssh_config import get_all_hosts
+from remotex import config
+from remotex.ssh_config import get_all_hosts
 
 console = Console()
 group_app = typer.Typer(help="Manage server groups")
@@ -30,7 +30,7 @@ def group_add(
     
     if invalid_servers:
         console.print(f"[red]✗[/red] Invalid servers: {', '.join(invalid_servers)}")
-        console.print(f"[yellow]Use 'omnihost list' to see available servers[/yellow]")
+        console.print(f"[yellow]Use 'remotex list' to see available servers[/yellow]")
         raise typer.Exit(1)
     
     config.add_group(group_name, server_list)
@@ -50,7 +50,7 @@ def group_list():
     
     if not groups:
         console.print("[yellow]No groups defined yet[/yellow]")
-        console.print("Create one with: [cyan]omnihost group add <name> <servers>[/cyan]")
+        console.print("Create one with: [cyan]remotex group add <name> <servers>[/cyan]")
         return
     
     table = Table(title="Server Groups", show_header=True)

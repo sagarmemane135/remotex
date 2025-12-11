@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Callable, Optional
 from contextlib import contextmanager
 
-from omnihost.config import CONFIG_DIR
+from remotex.config import CONFIG_DIR
 
 PROFILE_DIR = CONFIG_DIR / "profiles"
 PROFILE_DIR.mkdir(parents=True, exist_ok=True)

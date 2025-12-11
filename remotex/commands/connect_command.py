@@ -11,8 +11,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich import box
 
-from omnihost.ssh_config import parse_ssh_config
-from omnihost.ssh_client import create_ssh_client
+from remotex.ssh_config import parse_ssh_config
+from remotex.ssh_client import create_ssh_client
 
 console = Console()
 

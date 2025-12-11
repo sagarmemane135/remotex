@@ -1,6 +1,6 @@
 # 📦 Packaging Guide
 
-This document explains how OmniHost is packaged and what gets included in distributions.
+This document explains how RemoteX is packaged and what gets included in distributions.
 
 ## Package Contents
 
@@ -8,7 +8,7 @@ This document explains how OmniHost is packaged and what gets included in distri
 
 The package includes:
 
-1. **Python Package** (`omnihost/`)
+1. **Python Package** (`remotex/`)
    - All source code and modules
    - Command implementations
    - Core utilities
@@ -19,7 +19,7 @@ The package includes:
 
 3. **Man Pages** (`man/man1/`)
    - Generated man pages for the CLI
-   - File: `omnihost.1`
+   - File: `remotex.1`
 
 4. **Scripts** (`scripts/`)
    - `generate_man_pages.py` - Man page generator
@@ -42,7 +42,7 @@ Before building, generate man pages:
 python scripts/generate_man_pages.py
 ```
 
-This creates `man/man1/omnihost.1`.
+This creates `man/man1/remotex.1`.
 
 ### 2. Build Distribution
 
@@ -55,8 +55,8 @@ python -m build
 ```
 
 This creates:
-- `dist/omnihost-1.0.0.tar.gz` (source distribution)
-- `dist/omnihost-1.0.0-py3-none-any.whl` (wheel)
+- `dist/remotex-1.0.0.tar.gz` (source distribution)
+- `dist/remotex-1.0.0-py3-none-any.whl` (wheel)
 
 ### 3. Verify Package Contents
 
@@ -64,10 +64,10 @@ Check what's included:
 
 ```bash
 # For source distribution
-tar -tzf dist/omnihost-*.tar.gz | grep -E "(man|scripts|docs)"
+tar -tzf dist/remotex-*.tar.gz | grep -E "(man|scripts|docs)"
 
 # For wheel
-unzip -l dist/omnihost-*.whl | grep -E "(man|scripts|docs)"
+unzip -l dist/remotex-*.whl | grep -E "(man|scripts|docs)"
 ```
 
 ## Installation
@@ -75,12 +75,12 @@ unzip -l dist/omnihost-*.whl | grep -E "(man|scripts|docs)"
 ### Standard Installation
 
 ```bash
-pip install omnihost
+pip install remotex
 ```
 
 This installs:
 - ✅ Python package to site-packages
-- ✅ CLI command (`omnihost`)
+- ✅ CLI command (`remotex`)
 - ✅ All Python modules
 - ❌ Man pages (not automatically installed)
 
@@ -92,20 +92,20 @@ Man pages are included in the package but require manual installation:
 
 ```bash
 # After pip install
-python -m omnihost.install_man_pages
+python -m remotex.install_man_pages
 
 # Or with sudo for system-wide installation
-sudo python -m omnihost.install_man_pages
+sudo python -m remotex.install_man_pages
 ```
 
 #### Option 2: Manual Installation
 
 ```bash
 # Find package location
-python -c "import omnihost; import os; print(os.path.dirname(omnihost.__file__))"
+python -c "import remotex; import os; print(os.path.dirname(remotex.__file__))"
 
 # Copy man pages (adjust path as needed)
-sudo cp -r /path/to/omnihost/man/* /usr/share/man/
+sudo cp -r /path/to/remotex/man/* /usr/share/man/
 sudo mandb
 ```
 
@@ -114,7 +114,7 @@ sudo mandb
 ```bash
 # Install to user's local man directory
 mkdir -p ~/.local/share/man/man1
-cp man/man1/omnihost.1 ~/.local/share/man/man1/
+cp man/man1/remotex.1 ~/.local/share/man/man1/
 ```
 
 Then add to `~/.bashrc` or `~/.zshrc`:
@@ -128,13 +128,13 @@ After installation, verify:
 
 ```bash
 # Check CLI works
-omnihost --version
+remotex --version
 
 # Check man page (if installed)
-man omnihost
+man remotex
 
 # Check package location
-python -c "import omnihost; print(omnihost.__file__)"
+python -c "import remotex; print(remotex.__file__)"
 ```
 
 ## MANIFEST.in
@@ -155,26 +155,26 @@ Key packaging settings:
 
 ```toml
 [project]
-name = "omnihost688"
+name = "remotex688"
 version = "1.0.0"
 # ... metadata ...
 
 [project.scripts]
-omnihost = "omnihost.cli:main"
+remotex = "remotex.cli:main"
 
 [tool.setuptools.package-data]
-omnihost = ["../man/**/*.1"]
+remotex = ["../man/**/*.1"]
 ```
 
 ## Troubleshooting
 
 ### Man Pages Not Found
 
-**Problem:** `man omnihost` returns "No manual entry"
+**Problem:** `man remotex` returns "No manual entry"
 
 **Solutions:**
-1. Run the install script: `python -m omnihost.install_man_pages`
-2. Check man page location: `find /usr -name "omnihost.1" 2>/dev/null`
+1. Run the install script: `python -m remotex.install_man_pages`
+2. Check man page location: `find /usr -name "remotex.1" 2>/dev/null`
 3. Regenerate man pages: `python scripts/generate_man_pages.py`
 
 ### Package Missing Files
@@ -192,8 +192,8 @@ omnihost = ["../man/**/*.1"]
 
 **Solutions:**
 1. Check Python path: `python -m site`
-2. Verify entry point: `pip show omnihost`
-3. Reinstall: `pip install --force-reinstall omnihost`
+2. Verify entry point: `pip show remotex`
+3. Reinstall: `pip install --force-reinstall remotex`
 
 ## Best Practices
 
@@ -207,8 +207,8 @@ omnihost = ["../man/**/*.1"]
    ```bash
    python -m venv test_env
    source test_env/bin/activate
-   pip install dist/omnihost-*.whl
-   omnihost --version
+   pip install dist/remotex-*.whl
+   remotex --version
    ```
 
 3. **Include man pages in release notes**

@@ -1,5 +1,5 @@
 """
-OmniHost Command History
+RemoteX Command History
 Track and replay command history
 """
 
@@ -9,7 +9,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
-from omnihost.config import CONFIG_DIR
+from remotex.config import CONFIG_DIR
 
 HISTORY_FILE = CONFIG_DIR / "history.json"
 

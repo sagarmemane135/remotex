@@ -1,4 +1,4 @@
-# OmniHost Test Suite
+# RemoteX Test Suite
 
 ## Running Tests
 
@@ -21,7 +21,7 @@ python -m unittest tests.test_ssh_config -v
 ## Test Structure
 
 - `test_ssh_config.py` - SSH configuration management tests
-- `test_config.py` - OmniHost configuration tests
+- `test_config.py` - RemoteX configuration tests
 - `run_tests.py` - Test runner script
 
 ## Adding New Tests
@@ -34,7 +34,7 @@ python -m unittest tests.test_ssh_config -v
 Example:
 ```python
 import unittest
-from omnihost.my_module import my_function
+from remotex.my_module import my_function
 
 class TestMyModule(unittest.TestCase):
     def test_my_function(self):

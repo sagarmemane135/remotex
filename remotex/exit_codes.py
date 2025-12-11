@@ -1,10 +1,10 @@
 """
-Exit codes for OmniHost CLI.
+Exit codes for RemoteX CLI.
 Standardized exit codes for consistent error handling.
 """
 
 class ExitCode:
-    """Standardized exit codes for OmniHost."""
+    """Standardized exit codes for RemoteX."""
     
     # Success
     SUCCESS = 0
@@ -72,8 +72,8 @@ ERROR_MESSAGES = {
     ExitCode.HOST_NOT_FOUND: {
         "title": "Host Not Found",
         "suggestions": [
-            "List available hosts: omnihost list",
-            "Add the host: omnihost add",
+            "List available hosts: remotex list",
+            "Add the host: remotex add",
             "Check your SSH config: cat ~/.ssh/config"
         ]
     },
@@ -104,7 +104,7 @@ ERROR_MESSAGES = {
     ExitCode.INVALID_CONFIG: {
         "title": "Invalid Configuration",
         "suggestions": [
-            "Run config validation: omnihost config show",
+            "Run config validation: remotex config show",
             "Check for syntax errors in SSH config",
             "Restore default config if needed"
         ]

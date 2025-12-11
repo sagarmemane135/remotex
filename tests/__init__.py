@@ -1,4 +1,4 @@
 """
-OmniHost Test Suite
+RemoteX Test Suite
 """
 

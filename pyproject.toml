@@ -3,7 +3,7 @@ requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "omnihost688"
+name = "remotex"
 version = "1.0.1"
 description = "A feature-rich SSH server management CLI tool"
 readme = "README.md"
@@ -46,21 +46,21 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/sagarmemane135/omnihost"
-Repository = "https://github.com/sagarmemane135/omnihost"
-Documentation = "https://github.com/sagarmemane135/omnihost/blob/main/README.md"
-Issues = "https://github.com/sagarmemane135/omnihost/issues"
+Homepage = "https://github.com/sagarmemane135/remotex"
+Repository = "https://github.com/sagarmemane135/remotex"
+Documentation = "https://github.com/sagarmemane135/remotex/blob/main/README.md"
+Issues = "https://github.com/sagarmemane135/remotex/issues"
 
 [project.scripts]
-omnihost = "omnihost.cli:main"
+remotex = "remotex.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["omnihost*"]
+include = ["remotex*"]
 exclude = ["tests*", "venv*"]
 
 [tool.setuptools.package-data]
-omnihost = ["../man/**/*.1"]
+remotex = ["../man/**/*.1"]
 
 # Include man pages and scripts in distribution
 [tool.setuptools]
@@ -68,4 +68,4 @@ include-package-data = true
 
 # Data files to include (man pages)
 # Note: setuptools doesn't directly support installing man pages to system directories
-# Users will need to run: python -m omnihost.install_man_pages (or use setup_man_pages.py)
+# Users will need to run: python -m remotex.install_man_pages (or use setup_man_pages.py)

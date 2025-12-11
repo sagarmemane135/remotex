@@ -7,8 +7,8 @@ from pathlib import Path
 from rich.console import Console
 from rich.table import Table
 
-from omnihost.profiling import PROFILE_DIR, analyze_profile, get_profile_summary
-from omnihost.utils import console
+from remotex.profiling import PROFILE_DIR, analyze_profile, get_profile_summary
+from remotex.utils import console
 
 app = typer.Typer(name="profile", help="Performance profiling tools")
 

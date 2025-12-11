@@ -1,5 +1,5 @@
 """
-OmniHost Retry Logic Module
+RemoteX Retry Logic Module
 Implements retry mechanisms with exponential backoff for SSH operations
 """
 

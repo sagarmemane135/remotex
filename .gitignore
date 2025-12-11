@@ -146,7 +146,7 @@ cython_debug/
 # Project specific
 *.bak
 *.tmp
-.omnihost/
+.remotex/
 
 # SSH keys (NEVER commit private keys)
 *.pem

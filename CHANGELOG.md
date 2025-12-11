@@ -1,11 +1,17 @@
 # Changelog
 
-All notable changes to OmniHost will be documented in this file.
+All notable changes to RemoteX will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.0.1] - 2025-12-11
+
+### Changed
+- **Package Rename**: Renamed from `remotex688` to `remotex` for professional branding
+  - PyPI package name: `remotex`
+  - GitHub repository: `sagarmemane135/remotex`
+  - CLI command remains: `remotex` (no breaking changes for users)
 
 ### Fixed
 - **Python 3.8 Compatibility**: Fixed `tuple[]/list[]` type hints (now use `Tuple[]/List[]` from typing)
@@ -64,7 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `exec-multi` tracks multi-server operations
   - `exec-group` tracks group-based operations
 - History now captures metadata: exit codes, parallel settings, retry counts
-- History file (`~/.omnihost/history.json`) automatically created on first use
+- History file (`~/.remotex/history.json`) automatically created on first use
 
 ### Added - Phase 2: Reliability & Integration
 
@@ -110,7 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Shows detailed impact summary
 
 #### Audit Logging
-- Automatic command execution logging to `~/.omnihost/audit.log`
+- Automatic command execution logging to `~/.remotex/audit.log`
 - JSON-formatted audit entries with timestamps
 - Track user, hosts, commands, and results
 - Success/failure statistics per execution
@@ -172,7 +178,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `config show` - Display current configuration
 - `config set-default` - Set default server for quick commands
 - `config clear-default` - Clear default server
-- Configuration persistence at `~/.omnihost/config.json`
+- Configuration persistence at `~/.remotex/config.json`
 
 #### Performance & Optimization
 - Parallel execution with ThreadPoolExecutor
@@ -183,7 +189,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Developer Features
 - Modular architecture with separate command modules
-- Python package with `omnihost` CLI entry point
+- Python package with `remotex` CLI entry point
 - Rich library integration for beautiful output
 - Comprehensive error handling with informative messages
 - Type hints throughout codebase
@@ -209,7 +215,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Project Structure
 ```
-omnihost/
+remotex/
 ├── __init__.py
 ├── cli.py
 ├── config.py
@@ -233,7 +239,7 @@ omnihost/
 
 ### Changed
 - Moved from monolithic `main.py` to modular package structure
-- Converted from `python main.py` execution to installable `omnihost` command
+- Converted from `python main.py` execution to installable `remotex` command
 - Enhanced output formatting with Rich library
 - Improved error messages with context panels
 
@@ -274,7 +280,7 @@ omnihost/
 
 ### Version 1.0.0 - Initial Release
 
-This is the first production-ready release of OmniHost, a high-performance SSH management CLI designed specifically for DevOps engineers managing multiple servers.
+This is the first production-ready release of RemoteX, a high-performance SSH management CLI designed specifically for DevOps engineers managing multiple servers.
 
 **Key Highlights:**
 - ⚡ **5x faster** than traditional serial execution
@@ -293,11 +299,11 @@ This is the first production-ready release of OmniHost, a high-performance SSH m
 **Try it now:**
 ```bash
 pip install -e .
-omnihost --help
+remotex --help
 ```
 
 For detailed usage, see [README.md](README.md) and [QUICK_REFERENCE.md](QUICK_REFERENCE.md).
 
 ---
 
-[1.0.0]: https://github.com/sagar.memane/omnihost/releases/tag/v1.0.0
+[1.0.0]: https://github.com/sagarmemane135/remotex/releases/tag/v1.0.0

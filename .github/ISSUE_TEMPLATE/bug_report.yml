@@ -1,5 +1,5 @@
 name: Bug Report
-description: File a bug report to help us improve OmniHost
+description: File a bug report to help us improve RemoteX
 title: "[Bug]: "
 labels: ["bug", "triage"]
 body:
@@ -50,8 +50,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: OmniHost Version
-      description: What version of OmniHost are you using?
+      label: RemoteX Version
+      description: What version of RemoteX are you using?
       placeholder: "1.0.0"
     validations:
       required: true

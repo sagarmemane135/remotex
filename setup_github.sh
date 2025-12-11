@@ -1,9 +1,9 @@
 #!/bin/bash
-# OmniHost - GitHub Publishing Setup Script
+# RemoteX - GitHub Publishing Setup Script
 
 set -e
 
-echo "🚀 OmniHost GitHub Publishing Setup"
+echo "🚀 RemoteX GitHub Publishing Setup"
 echo "===================================="
 echo ""
 
@@ -46,7 +46,7 @@ if [ ! -d .git ]; then
     echo "Initializing Git repository..."
     git init
     git add .
-    git commit -m "Initial commit: OmniHost v1.0.0
+    git commit -m "Initial commit: RemoteX v1.0.0
 
 - High-performance SSH management CLI
 - 17 commands for DevOps workflows
@@ -75,20 +75,20 @@ echo "Next steps:"
 echo "==========="
 echo "1. Create a new repository on GitHub:"
 echo "   https://github.com/new"
-echo "   Repository name: omnihost"
+echo "   Repository name: remotex"
 echo "   Description: High-Performance SSH Management CLI for DevOps Engineers"
 echo "   Public repository"
 echo "   DO NOT initialize with README, license, or .gitignore"
 echo ""
 echo "2. Push to GitHub:"
-echo "   git remote add origin https://github.com/$GITHUB_USER/omnihost.git"
+echo "   git remote add origin https://github.com/$GITHUB_USER/remotex.git"
 echo "   git branch -M main"
 echo "   git push -u origin main"
 echo ""
 echo "3. Create a release:"
 echo "   git tag -a v1.0.0 -m 'Release v1.0.0 - Initial Production Release'"
 echo "   git push origin v1.0.0"
-echo "   Then create release on GitHub: https://github.com/$GITHUB_USER/omnihost/releases/new"
+echo "   Then create release on GitHub: https://github.com/$GITHUB_USER/remotex/releases/new"
 echo ""
 echo "4. Configure repository:"
 echo "   - Add topics: python, ssh, devops, cli, typer, paramiko"

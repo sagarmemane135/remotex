@@ -9,10 +9,10 @@ from rich.panel import Panel
 from rich.text import Text
 from datetime import datetime
 
-from omnihost.history import (
+from remotex.history import (
     get_history, get_history_entry, clear_history, export_history
 )
-from omnihost.utils import console
+from remotex.utils import console
 
 app = typer.Typer(name="history", help="Manage command history")
 
@@ -125,8 +125,8 @@ def history_replay(
     
     # Parse the command
     parts = full_command.split()
-    if parts[0] != "omnihost":
-        parts.insert(0, "omnihost")
+    if parts[0] != "remotex":
+        parts.insert(0, "remotex")
     
     # Execute
     try:

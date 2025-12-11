@@ -31,32 +31,32 @@ jobs:
       run: |
         pip install flake8
         # Stop build if there are Python syntax errors or undefined names
-        flake8 omnihost --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 remotex --count --select=E9,F63,F7,F82 --show-source --statistics
         # Exit-zero treats all errors as warnings
-        flake8 omnihost --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        flake8 remotex --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     
     - name: Check code with pylint
       run: |
         pip install pylint
-        pylint omnihost --exit-zero --max-line-length=127
+        pylint remotex --exit-zero --max-line-length=127
       continue-on-error: true
     
     - name: Type check with mypy
       run: |
         pip install mypy types-paramiko
-        mypy omnihost --ignore-missing-imports
+        mypy remotex --ignore-missing-imports
       continue-on-error: true
     
     - name: Test CLI installation
       run: |
-        omnihost --version
-        omnihost --help
+        remotex --version
+        remotex --help
     
     - name: Security check with bandit
       continue-on-error: true
       run: |
         pip install bandit
-        bandit -r omnihost -ll
+        bandit -r remotex -ll
 
   style:
     runs-on: ubuntu-latest
@@ -73,12 +73,12 @@ jobs:
     - name: Check code formatting with black
       run: |
         pip install black
-        black --check omnihost || true
+        black --check remotex || true
     
     - name: Check imports with isort
       run: |
         pip install isort
-        isort --check-only omnihost || true
+        isort --check-only remotex || true
 
   docs:
     runs-on: ubuntu-latest
@@ -101,7 +101,7 @@ jobs:
     
     - name: Check for TODOs
       run: |
-        if grep -r "TODO\|FIXME\|XXX" omnihost/; then
+        if grep -r "TODO\|FIXME\|XXX" remotex/; then
           echo "Found TODOs in code - consider addressing them"
         fi
       continue-on-error: true

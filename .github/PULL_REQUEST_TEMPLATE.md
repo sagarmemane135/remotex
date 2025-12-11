@@ -31,7 +31,7 @@ Fixes #(issue number)
 ### Test Environment
 - OS: 
 - Python version: 
-- OmniHost version: 
+- RemoteX version: 
 
 ### Test Steps
 1. 

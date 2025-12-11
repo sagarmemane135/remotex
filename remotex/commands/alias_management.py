@@ -1,5 +1,5 @@
 """
-OmniHost Command Alias Management
+RemoteX Command Alias Management
 Define and execute reusable command aliases
 """
 
@@ -8,7 +8,7 @@ from rich.console import Console
 from rich.table import Table
 from typing import Optional
 
-from omnihost import config
+from remotex import config
 
 console = Console()
 alias_app = typer.Typer(help="Manage command aliases")
@@ -23,7 +23,7 @@ def alias_add(
     config.add_command_alias(alias_name, command)
     console.print(f"[green]✓[/green] Alias '[cyan]{alias_name}[/cyan]' created")
     console.print(f"  Command: [yellow]{command}[/yellow]")
-    console.print(f"  Usage: [dim]omnihost run {alias_name} <host>[/dim]")
+    console.print(f"  Usage: [dim]remotex run {alias_name} <host>[/dim]")
 
 
 @alias_app.command(name="list")
@@ -33,7 +33,7 @@ def alias_list():
     
     if not aliases:
         console.print("[yellow]No aliases defined yet[/yellow]")
-        console.print("Create one with: [cyan]omnihost alias add <name> '<command>'[/cyan]")
+        console.print("Create one with: [cyan]remotex alias add <name> '<command>'[/cyan]")
         return
     
     table = Table(title="Command Aliases", show_header=True)

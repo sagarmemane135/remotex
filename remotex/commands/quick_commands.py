@@ -10,8 +10,8 @@ from rich import box
 
 from typing import Optional
 
-from omnihost.commands.exec_command import exec_command
-from omnihost.config import resolve_server
+from remotex.commands.exec_command import exec_command
+from remotex.config import resolve_server
 
 console = Console()
 
@@ -35,7 +35,7 @@ def uptime(
     """Quick uptime check."""
     host = resolve_server(host)
     if not host:
-        console.print("[red]No server specified and no default server set. Use: omnihost config set-default <server>[/red]")
+        console.print("[red]No server specified and no default server set. Use: remotex config set-default <server>[/red]")
         raise typer.Exit(code=1)
     exec_command(host, "uptime", plain=False, compact=compact, silent=False)
 
@@ -47,7 +47,7 @@ def disk(
     """Quick disk usage check."""
     host = resolve_server(host)
     if not host:
-        console.print("[red]No server specified and no default server set. Use: omnihost config set-default <server>[/red]")
+        console.print("[red]No server specified and no default server set. Use: remotex config set-default <server>[/red]")
         raise typer.Exit(code=1)
     exec_command(host, "df -h", plain=False, compact=compact, silent=False)
 
@@ -59,7 +59,7 @@ def memory(
     """Quick memory usage check."""
     host = resolve_server(host)
     if not host:
-        console.print("[red]No server specified and no default server set. Use: omnihost config set-default <server>[/red]")
+        console.print("[red]No server specified and no default server set. Use: remotex config set-default <server>[/red]")
         raise typer.Exit(code=1)
     exec_command(host, "free -h", plain=False, compact=compact, silent=False)
 

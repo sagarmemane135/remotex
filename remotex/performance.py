@@ -10,7 +10,7 @@ from typing import Optional, Dict, List
 from functools import wraps
 
 # Cache directory
-CACHE_DIR = Path.home() / ".omnihost" / "cache"
+CACHE_DIR = Path.home() / ".remotex" / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 

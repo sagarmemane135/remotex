@@ -8,7 +8,7 @@ from unittest.mock import patch, mock_open
 import tempfile
 import os
 
-from omnihost.ssh_config import (
+from remotex.ssh_config import (
     get_ssh_config_path,
     ensure_ssh_config_exists,
     get_all_hosts,
@@ -41,7 +41,7 @@ Host test2
         self.assertIsInstance(path, Path)
         self.assertTrue(str(path).endswith(".ssh/config"))
     
-    @patch('omnihost.ssh_config.get_ssh_config_path')
+    @patch('remotex.ssh_config.get_ssh_config_path')
     def test_parse_ssh_config(self, mock_path):
         """Test parsing SSH config."""
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
