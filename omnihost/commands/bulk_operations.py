@@ -82,8 +82,12 @@ def exec_all(
     retries: int = typer.Option(0, "--retries", "-r", help="Number of retry attempts on failure"),
     dry_run: bool = typer.Option(False, "--dry-run", help="Show what would be executed without running"),
     json_output: bool = typer.Option(False, "--json", help="Output results as JSON"),
+    csv_output: bool = typer.Option(False, "--csv", help="Output results as CSV"),
+    plain: bool = typer.Option(False, "--plain", help="Plain output without formatting"),
+    compact: bool = typer.Option(False, "--compact", help="Compact output format"),
+    quiet: bool = typer.Option(False, "--quiet", "-q", help="Minimal output for scripting"),
     continue_on_error: bool = typer.Option(True, "--continue/--stop", help="Continue on errors"),
-    show_output: bool = typer.Option(True, "--show-output/--no-output", help="Show command output")
+    show_output: bool = typer.Option(False, "--show-output", help="Show detailed command output")
 ):
     """
     Execute a command on ALL configured servers in parallel.
@@ -128,21 +132,23 @@ def exec_all(
         console.print(f"[dim]Would execute on {len(host_aliases)} servers with {parallel} parallel connections[/dim]")
         return
     
-    console.print(Panel(
-        f"[cyan]Command:[/cyan] {command}\n"
-        f"[cyan]Targets:[/cyan] {len(host_aliases)} servers\n"
-        f"[cyan]Parallel:[/cyan] {parallel} connections\n"
-        f"[cyan]Timeout:[/cyan] {timeout}s",
-        title="🚀 Bulk Execution",
-        border_style="cyan",
-        box=box.ROUNDED
-    ))
-    console.print()
+    # Skip decorative output for machine-readable formats
+    if not (json_output or csv_output or quiet):
+        console.print(Panel(
+            f"[cyan]Command:[/cyan] {command}\n"
+            f"[cyan]Targets:[/cyan] {len(host_aliases)} servers\n"
+            f"[cyan]Parallel:[/cyan] {parallel} connections\n"
+            f"[cyan]Timeout:[/cyan] {timeout}s",
+            title="🚀 Bulk Execution",
+            border_style="cyan",
+            box=box.ROUNDED
+        ))
+        console.print()
     
     results = []
     
-    # JSON output mode - skip progress bars
-    if json_output:
+    # Skip progress bars for machine-readable formats
+    if json_output or csv_output or quiet:
         with ThreadPoolExecutor(max_workers=parallel) as executor:
             future_to_host = {
                 executor.submit(execute_on_host, host, command, timeout, retries): host 
@@ -198,9 +204,10 @@ def exec_all(
     success_count = sum(1 for r in results if r['success'])
     failed_count = len(results) - success_count
     
-    # JSON output mode
+    # JSON output mode (pure, no decorations)
     if json_output:
         import json
+        import sys
         output_data = {
             "command": command,
             "total": len(results),
@@ -217,7 +224,57 @@ def exec_all(
                 for r in results
             ]
         }
-        console.print(json.dumps(output_data, indent=2))
+        # Pure JSON output to stdout, bypassing rich console
+        print(json.dumps(output_data, indent=2))
+        if failed_count > 0:
+            raise typer.Exit(code=1)
+        return
+    
+    # CSV output mode (pure, no decorations)
+    if csv_output:
+        import csv
+        import sys
+        writer = csv.writer(sys.stdout)
+        writer.writerow(["Host", "Success", "ExitCode", "Output", "Error"])
+        for r in results:
+            writer.writerow([r['host'], r['success'], r['exit_code'], r['output'].replace('\n', ' '), r['error'].replace('\n', ' ')])
+        if failed_count > 0:
+            raise typer.Exit(code=1)
+        return
+    
+    # Quiet mode (minimal output for scripting)
+    if quiet:
+        for r in results:
+            status = "✓" if r['success'] else "✗"
+            output = r['output'].strip() or r['error'].strip()
+            print(f"{r['host']}: {status} [{r['exit_code']}] {output}")
+        if failed_count > 0:
+            raise typer.Exit(code=1)
+        return
+    
+    # Plain mode (simple text without colors)
+    if plain:
+        print(f"\nExecuting on {len(host_aliases)} servers...\n")
+        for r in results:
+            status = "SUCCESS" if r['success'] else "FAILED"
+            print(f"{r['host']}: {status} (exit code: {r['exit_code']})")
+            if show_output and r['output']:
+                print(r['output'])
+            if r['error']:
+                print(f"Error: {r['error']}")
+            print()
+        print(f"Summary: {success_count}/{len(results)} successful")
+        if failed_count > 0:
+            raise typer.Exit(code=1)
+        return
+    
+    # Compact mode (condensed output)
+    if compact:
+        for r in results:
+            status = "✓" if r['success'] else "✗"
+            output_preview = (r['output'] or r['error']).replace('\n', ' ')[:100]
+            console.print(f"{status} [cyan]{r['host']}[/cyan] [{r['exit_code']}]: {output_preview}")
+        console.print(f"\n{success_count}/{len(results)} successful")
         if failed_count > 0:
             raise typer.Exit(code=1)
         return
@@ -233,12 +290,12 @@ def exec_all(
     
     for result in results:
         status = "[green]✓ Success[/green]" if result['success'] else "[red]✗ Failed[/red]"
-        preview = result['output'][:50].replace('\n', ' ') if result['output'] else result['error'][:50].replace('\n', ' ')
+        preview = result['output'][:150].replace('\n', ' ') if result['output'] else result['error'][:150].replace('\n', ' ')
         table.add_row(
             result['host'],
             status,
             str(result['exit_code']),
-            preview + "..." if len(preview) == 50 else preview
+            preview + "..." if len(preview) == 150 else preview
         )
     
     console.print(table)
@@ -303,7 +360,12 @@ def exec_multi(
     timeout: int = typer.Option(30, "--timeout", "-t", help="Command timeout in seconds"),
     retries: int = typer.Option(0, "--retries", "-r", help="Number of retry attempts on failure"),
     dry_run: bool = typer.Option(False, "--dry-run", help="Show what would be executed without running"),
-    json_output: bool = typer.Option(False, "--json", help="Output results as JSON")
+    json_output: bool = typer.Option(False, "--json", help="Output results as JSON"),
+    csv_output: bool = typer.Option(False, "--csv", help="Output results as CSV"),
+    plain: bool = typer.Option(False, "--plain", help="Plain output without formatting"),
+    compact: bool = typer.Option(False, "--compact", help="Compact output format"),
+    quiet: bool = typer.Option(False, "--quiet", "-q", help="Minimal output for scripting"),
+    show_output: bool = typer.Option(False, "--show-output", help="Show detailed command output")
 ):
     """
     Execute a command on specific servers (comma-separated list).
@@ -339,20 +401,22 @@ def exec_multi(
         console.print(f"\n[yellow]⚠[/yellow]  This is a dry run. Use without --dry-run to execute.")
         return
     
-    console.print(Panel(
-        f"[cyan]Command:[/cyan] {command}\n"
-        f"[cyan]Targets:[/cyan] {', '.join(host_list)}\n"
-        f"[cyan]Parallel:[/cyan] {parallel} connections",
-        title="🎯 Multi-Server Execution",
-        border_style="cyan",
-        box=box.ROUNDED
-    ))
-    console.print()
+    # Skip decorative output for machine-readable formats
+    if not (json_output or csv_output or quiet):
+        console.print(Panel(
+            f"[cyan]Command:[/cyan] {command}\n"
+            f"[cyan]Targets:[/cyan] {', '.join(host_list)}\n"
+            f"[cyan]Parallel:[/cyan] {parallel} connections",
+            title="🎯 Multi-Server Execution",
+            border_style="cyan",
+            box=box.ROUNDED
+        ))
+        console.print()
     
     results = []
     
-    # JSON output mode - skip progress bars
-    if json_output:
+    # Skip progress bars for machine-readable formats
+    if json_output or csv_output or quiet:
         with ThreadPoolExecutor(max_workers=parallel) as executor:
             future_to_host = {
                 executor.submit(execute_on_host, host, command, timeout, retries): host 
@@ -407,7 +471,7 @@ def exec_multi(
     success_count = sum(1 for r in results if r['success'])
     failed_count = len(results) - success_count
     
-    # JSON output mode
+    # JSON output mode (pure, no decorations)
     if json_output:
         import json
         output_data = {
@@ -427,17 +491,67 @@ def exec_multi(
                 for r in results
             ]
         }
-        console.print(json.dumps(output_data, indent=2))
+        print(json.dumps(output_data, indent=2))
+        if failed_count > 0:
+            raise typer.Exit(code=1)
+        return
+    
+    # CSV output mode
+    if csv_output:
+        import csv
+        import sys
+        writer = csv.writer(sys.stdout)
+        writer.writerow(["Host", "Success", "ExitCode", "Output", "Error"])
+        for r in results:
+            writer.writerow([r['host'], r['success'], r['exit_code'], r['output'].replace('\n', ' '), r['error'].replace('\n', ' ')])
+        if failed_count > 0:
+            raise typer.Exit(code=1)
+        return
+    
+    # Quiet mode
+    if quiet:
+        for r in results:
+            status = "✓" if r['success'] else "✗"
+            output = r['output'].strip() or r['error'].strip()
+            print(f"{r['host']}: {status} [{r['exit_code']}] {output}")
+        if failed_count > 0:
+            raise typer.Exit(code=1)
+        return
+    
+    # Plain mode
+    if plain:
+        print(f"\nExecuting on {len(host_list)} servers...\n")
+        for r in results:
+            status = "SUCCESS" if r['success'] else "FAILED"
+            print(f"{r['host']}: {status} (exit code: {r['exit_code']})")
+            if show_output and r['output']:
+                print(r['output'])
+            if r['error']:
+                print(f"Error: {r['error']}")
+            print()
+        print(f"Summary: {success_count}/{len(results)} successful")
+        if failed_count > 0:
+            raise typer.Exit(code=1)
+        return
+    
+    # Compact mode
+    if compact:
+        for r in results:
+            status = "✓" if r['success'] else "✗"
+            output_preview = (r['output'] or r['error']).replace('\n', ' ')[:100]
+            console.print(f"{status} [cyan]{r['host']}[/cyan] [{r['exit_code']}]: {output_preview}")
+        console.print(f"\n{success_count}/{len(results)} successful")
         if failed_count > 0:
             raise typer.Exit(code=1)
         return
     
     console.print()
     
-    # Display results
-    for result in results:
-        border_style = "green" if result['success'] else "red"
-        title = f"{'✓' if result['success'] else '✗'} {result['host']}"
+    # Show detailed output if requested
+    if show_output:
+        for result in results:
+            border_style = "green" if result['success'] else "red"
+            title = f"{'✓' if result['success'] else '✗'} {result['host']}"
         
         content = ""
         if result['output']:
@@ -484,14 +598,18 @@ def exec_multi(
 
 
 def exec_group(
-    group_name: str = typer.Argument(..., help="Group name"),
-    command: str = typer.Argument(..., help="Command to execute on group"),
+    group_name: str = typer.Argument(..., help="Name of the server group"),
+    command: str = typer.Argument(..., help="Command to execute"),
     parallel: int = typer.Option(5, "--parallel", "-p", help="Number of parallel connections"),
     timeout: int = typer.Option(30, "--timeout", "-t", help="Command timeout in seconds"),
     retries: int = typer.Option(0, "--retries", "-r", help="Number of retry attempts on failure"),
     dry_run: bool = typer.Option(False, "--dry-run", help="Show what would be executed without running"),
     json_output: bool = typer.Option(False, "--json", help="Output results as JSON"),
-    show_output: bool = typer.Option(True, "--show-output/--no-output", help="Show command output")
+    csv_output: bool = typer.Option(False, "--csv", help="Output results as CSV"),
+    plain: bool = typer.Option(False, "--plain", help="Plain output without formatting"),
+    compact: bool = typer.Option(False, "--compact", help="Compact output format"),
+    quiet: bool = typer.Option(False, "--quiet", "-q", help="Minimal output for scripting"),
+    show_output: bool = typer.Option(False, "--show-output", help="Show detailed command output")
 ):
     """
     Execute a command on all servers in a group.
@@ -535,23 +653,24 @@ def exec_group(
         console.print(f"\n[yellow]⚠[/yellow]  This is a dry run. Use without --dry-run to execute.")
         return
     
-    # Real execution
-    console.print(Panel(
-        f"[cyan]Command:[/cyan] {command}\n"
-        f"[cyan]Group:[/cyan] {group_name}\n"
-        f"[cyan]Targets:[/cyan] {len(servers)} servers\n"
-        f"[cyan]Parallel:[/cyan] {parallel} connections\n"
-        f"[cyan]Timeout:[/cyan] {timeout}s",
-        title="🚀 Group Execution",
-        border_style="cyan",
-        box=box.ROUNDED
-    ))
-    console.print()
+    # Skip decorative output for machine-readable formats
+    if not (json_output or csv_output or quiet):
+        console.print(Panel(
+            f"[cyan]Command:[/cyan] {command}\n"
+            f"[cyan]Group:[/cyan] {group_name}\n"
+            f"[cyan]Targets:[/cyan] {len(servers)} servers\n"
+            f"[cyan]Parallel:[/cyan] {parallel} connections\n"
+            f"[cyan]Timeout:[/cyan] {timeout}s",
+            title="🚀 Group Execution",
+            border_style="cyan",
+            box=box.ROUNDED
+        ))
+        console.print()
     
     results = []
     
-    # JSON output mode - skip progress bars
-    if json_output:
+    # Skip progress bars for machine-readable formats
+    if json_output or csv_output or quiet:
         with ThreadPoolExecutor(max_workers=parallel) as executor:
             future_to_host = {
                 executor.submit(execute_on_host, host, command, timeout, retries): host 
@@ -607,7 +726,7 @@ def exec_group(
     success_count = sum(1 for r in results if r['success'])
     failed_count = len(results) - success_count
     
-    # JSON output mode
+    # JSON output mode (pure, no decorations)
     if json_output:
         import json
         output_data = {
@@ -627,7 +746,7 @@ def exec_group(
                 for r in results
             ]
         }
-        console.print(json.dumps(output_data, indent=2))
+        print(json.dumps(output_data, indent=2))
         
         # Audit log
         from omnihost.audit import log_command_execution
@@ -639,6 +758,55 @@ def exec_group(
             metadata={"group": group_name, "parallel": parallel, "timeout": timeout, "retries": retries}
         )
         
+        if failed_count > 0:
+            raise typer.Exit(code=1)
+        return
+    
+    # CSV output mode
+    if csv_output:
+        import csv
+        import sys
+        writer = csv.writer(sys.stdout)
+        writer.writerow(["Host", "Success", "ExitCode", "Output", "Error"])
+        for r in results:
+            writer.writerow([r['host'], r['success'], r['exit_code'], r['output'].replace('\n', ' '), r['error'].replace('\n', ' ')])
+        if failed_count > 0:
+            raise typer.Exit(code=1)
+        return
+    
+    # Quiet mode
+    if quiet:
+        for r in results:
+            status = "✓" if r['success'] else "✗"
+            output = r['output'].strip() or r['error'].strip()
+            print(f"{r['host']}: {status} [{r['exit_code']}] {output}")
+        if failed_count > 0:
+            raise typer.Exit(code=1)
+        return
+    
+    # Plain mode
+    if plain:
+        print(f"\nExecuting on {len(servers)} servers in group '{group_name}'...\n")
+        for r in results:
+            status = "SUCCESS" if r['success'] else "FAILED"
+            print(f"{r['host']}: {status} (exit code: {r['exit_code']})")
+            if show_output and r['output']:
+                print(r['output'])
+            if r['error']:
+                print(f"Error: {r['error']}")
+            print()
+        print(f"Summary: {success_count}/{len(results)} successful")
+        if failed_count > 0:
+            raise typer.Exit(code=1)
+        return
+    
+    # Compact mode
+    if compact:
+        for r in results:
+            status = "✓" if r['success'] else "✗"
+            output_preview = (r['output'] or r['error']).replace('\n', ' ')[:100]
+            console.print(f"{status} [cyan]{r['host']}[/cyan] [{r['exit_code']}]: {output_preview}")
+        console.print(f"\n{success_count}/{len(results)} successful")
         if failed_count > 0:
             raise typer.Exit(code=1)
         return
@@ -655,12 +823,12 @@ def exec_group(
     
     for result in results:
         status = "[green]✓ Success[/green]" if result['success'] else "[red]✗ Failed[/red]"
-        preview = result['output'][:50].replace('\n', ' ') if result['output'] else result['error'][:50].replace('\n', ' ')
+        preview = result['output'][:150].replace('\n', ' ') if result['output'] else result['error'][:150].replace('\n', ' ')
         table.add_row(
             result['host'],
             status,
             str(result['exit_code']),
-            preview
+            preview + "..." if len(preview) == 150 else preview
         )
     
     console.print(table)
