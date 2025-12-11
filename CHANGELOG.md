@@ -5,6 +5,23 @@ All notable changes to OmniHost will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2025-12-11
+
+### Fixed
+- **Python 3.8 Compatibility**: Fixed `tuple[]/list[]` type hints (now use `Tuple[]/List[]` from typing)
+- **Mypy Type Checking**: Resolved all 18 type errors across 5 files
+  - Added type annotations for pstats.Stats attributes
+  - Fixed Optional[str] type mismatches in quick_commands
+  - Removed duplicate function definitions
+  - Fixed stdin encoding and bitwise operation issues
+- **Bandit Security**: Addressed security warnings with nosec annotations
+  - B507: AutoAddPolicy usage documented (SSH config manages host keys)
+  - B601: exec_command usage documented (trusted admin input)
+- **CI/CD Pipeline**: Fixed all GitHub Actions failures
+  - YAML syntax error (duplicate continue-on-error)
+  - Type checking now passes on Python 3.8-3.12
+  - All test matrix combinations now pass
+
 ## [Unreleased]
 
 ### Added - Production-Ready Output Modes (2025-12-11)
