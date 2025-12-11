@@ -147,7 +147,7 @@ def pull(
         try:
             sftp.stat(remote_path)
             remote_attrs = sftp.lstat(remote_path)
-            is_dir = remote_attrs.st_mode & 0o040000  # Directory bit
+            is_dir = bool(remote_attrs.st_mode and (remote_attrs.st_mode & 0o040000))  # Directory bit
         except IOError:
             console.print(f"[red]✗[/red] Remote path '[cyan]{remote_path}[/cyan]' not found")
             sftp.close()

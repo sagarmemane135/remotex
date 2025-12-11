@@ -8,6 +8,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich import box
 
+from typing import Optional
+
 from omnihost.commands.exec_command import exec_command
 from omnihost.config import resolve_server
 
@@ -27,7 +29,7 @@ def register_quick_commands(app: typer.Typer):
 
 
 def uptime(
-    host: str = typer.Argument(None, help="Server alias (uses default if not specified)"),
+    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
     compact: bool = typer.Option(True, "--compact/--normal", "-c/-n", help="Compact output (default for quick commands)")
 ):
     """Quick uptime check."""
@@ -39,7 +41,7 @@ def uptime(
 
 
 def disk(
-    host: str = typer.Argument(None, help="Server alias (uses default if not specified)"),
+    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
     compact: bool = typer.Option(True, "--compact/--normal", "-c/-n", help="Compact output")
 ):
     """Quick disk usage check."""
@@ -51,7 +53,7 @@ def disk(
 
 
 def memory(
-    host: str = typer.Argument(None, help="Server alias (uses default if not specified)"),
+    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
     compact: bool = typer.Option(True, "--compact/--normal", "-c/-n", help="Compact output")
 ):
     """Quick memory usage check."""
@@ -63,7 +65,7 @@ def memory(
 
 
 def cpu(
-    host: str = typer.Argument(None, help="Server alias (uses default if not specified)"),
+    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
     compact: bool = typer.Option(True, "--compact/--normal", "-c/-n")
 ):
     """Quick CPU info."""
@@ -75,7 +77,7 @@ def cpu(
 
 
 def processes(
-    host: str = typer.Argument(None, help="Server alias (uses default if not specified)"),
+    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
     limit: int = typer.Option(15, "--limit", "-n", help="Number of processes to show"),
     compact: bool = typer.Option(True, "--compact/--normal", "-c/-n")
 ):
@@ -88,7 +90,7 @@ def processes(
 
 
 def restart_service(
-    host: str = typer.Argument(None, help="Server alias (uses default if not specified)"),
+    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
     service: str = typer.Argument(..., help="Service name"),
     compact: bool = typer.Option(True, "--compact/--normal", "-c/-n")
 ):
@@ -101,7 +103,7 @@ def restart_service(
 
 
 def service_status(
-    host: str = typer.Argument(None, help="Server alias (uses default if not specified)"),
+    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
     service: str = typer.Argument(..., help="Service name"),
     compact: bool = typer.Option(True, "--compact/--normal", "-c/-n")
 ):
@@ -114,7 +116,7 @@ def service_status(
 
 
 def logs(
-    host: str = typer.Argument(None, help="Server alias (uses default if not specified)"),
+    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
     service: str = typer.Argument(..., help="Service name or log file path"),
     lines: int = typer.Option(50, "--lines", "-n", help="Number of lines to show"),
     follow: bool = typer.Option(False, "--follow", "-f", help="Follow log output"),

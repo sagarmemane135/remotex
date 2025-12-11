@@ -61,7 +61,8 @@ def analyze_profile(profile_file: Path, sort_by: str = "cumulative", limit: int 
     
     # Capture output
     output = io.StringIO()
-    stats.print_stats(limit, file=output)
+    stats.stream = output  # type: ignore[attr-defined]
+    stats.print_stats(limit)
     
     return output.getvalue()
 
@@ -71,10 +72,10 @@ def get_profile_summary(profile_file: Path) -> dict:
     stats = pstats.Stats(str(profile_file))
     
     return {
-        "total_calls": stats.total_calls,
-        "primitive_calls": stats.primitive_calls,
-        "total_time": stats.total_tt,
-        "cumulative_time": sum(call[2] for call in stats.stats.values())
+        "total_calls": stats.total_calls,  # type: ignore[attr-defined]
+        "primitive_calls": stats.primitive_calls,  # type: ignore[attr-defined]
+        "total_time": stats.total_tt,  # type: ignore[attr-defined]
+        "cumulative_time": sum(call[2] for call in stats.stats.values())  # type: ignore[attr-defined]
     }
 
 

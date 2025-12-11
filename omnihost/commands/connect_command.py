@@ -128,10 +128,10 @@ def connect(
                             break
                     
                     if sys.stdin in r:
-                        data = sys.stdin.read(1)
-                        if len(data) == 0:
+                        input_data = sys.stdin.read(1)
+                        if len(input_data) == 0:
                             break
-                        channel.send(data)
+                        channel.send(input_data.encode() if isinstance(input_data, str) else input_data)
                         
             finally:
                 termios.tcsetattr(sys.stdin, termios.TCSADRAIN, oldtty)

@@ -27,7 +27,7 @@ def load_config() -> Dict:
     ensure_config_dir()
     
     # Default configuration
-    default_config = {
+    default_config: Dict = {
         "default_server": None,
         "output_mode": "normal",  # normal, compact, silent
         "parallel_connections": 5,
@@ -332,67 +332,6 @@ def export_config(output_file: Optional[str] = None) -> str:
     Returns:
         str: Path to exported file
     """
-    from datetime import datetime
-    
-    config = load_config()
-    
-    if not output_file:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_file = str(CONFIG_DIR / f"config_backup_{timestamp}.json")
-    
-    output_path = Path(output_file)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    
-    with open(output_path, 'w') as f:
-        json.dump(config, f, indent=2)
-    
-    return str(output_path)
-
-
-def import_config(input_file: str, merge: bool = False) -> bool:
-    """
-    Import configuration from a JSON file.
-    
-    Args:
-        input_file: Path to input JSON file
-        merge: If True, merge with existing config. If False, replace.
-    
-    Returns:
-        bool: True if successful, False otherwise
-    """
-    input_path = Path(input_file)
-    
-    if not input_path.exists():
-        return False
-    
-    try:
-        with open(input_path, 'r') as f:
-            imported_config = json.load(f)
-        
-        if merge:
-            # Merge with existing config
-            existing_config = load_config()
-            existing_config.update(imported_config)
-            save_config(existing_config)
-        else:
-            # Replace config
-            save_config(imported_config)
-        
-        return True
-    except Exception:
-        return False
-
-def export_config(output_file: Optional[str] = None) -> str:
-    """
-    Export configuration to a JSON file.
-    
-    Args:
-        output_file: Path to output file (default: config_backup_<timestamp>.json)
-    
-    Returns:
-        str: Path to exported file
-    """
-    import time
     from datetime import datetime
     
     config = load_config()
