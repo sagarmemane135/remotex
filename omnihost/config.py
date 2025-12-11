@@ -7,7 +7,7 @@ Supports environment variables for configuration.
 import json
 import os
 from pathlib import Path
-from typing import Optional, Dict
+from typing import Optional, Dict, Tuple, List
 
 CONFIG_DIR = Path.home() / ".omnihost"
 CONFIG_FILE = CONFIG_DIR / "config.json"
@@ -270,7 +270,7 @@ def remove_command_alias(alias: str):
 
 # ========== Config Validation & Management ==========
 
-def validate_config() -> tuple[bool, list[str]]:
+def validate_config() -> Tuple[bool, List[str]]:
     """
     Validate configuration file.
     
@@ -381,61 +381,6 @@ def import_config(input_file: str, merge: bool = False) -> bool:
         return True
     except Exception:
         return False
-
-
-# ========== Config Validation & Management ==========
-
-def validate_config() -> tuple[bool, list[str]]:
-    """
-    Validate configuration file.
-    
-    Returns:
-        tuple: (is_valid, list_of_errors)
-    """
-    errors = []
-    
-    try:
-        config = load_config()
-        
-        # Validate output_mode
-        valid_modes = ["normal", "compact", "silent"]
-        if config.get("output_mode") not in valid_modes:
-            errors.append(f"Invalid output_mode: {config.get('output_mode')}. Must be one of {valid_modes}")
-        
-        # Validate parallel_connections
-        parallel = config.get("parallel_connections", 5)
-        if not isinstance(parallel, int) or parallel < 1 or parallel > 50:
-            errors.append(f"Invalid parallel_connections: {parallel}. Must be between 1 and 50")
-        
-        # Validate timeout
-        timeout = config.get("timeout", 30)
-        if not isinstance(timeout, int) or timeout < 1:
-            errors.append(f"Invalid timeout: {timeout}. Must be a positive integer")
-        
-        # Validate default_server exists (if set)
-        default_server = config.get("default_server")
-        if default_server:
-            from omnihost.ssh_config import host_exists
-            if not host_exists(default_server):
-                errors.append(f"Default server '{default_server}' not found in SSH config")
-        
-        # Validate groups reference existing servers
-        from omnihost.ssh_config import get_all_hosts
-        all_hosts = {h['alias'] for h in get_all_hosts()}
-        groups = config.get("groups", {})
-        for group_name, servers in groups.items():
-            if not isinstance(servers, list):
-                errors.append(f"Group '{group_name}' has invalid format (not a list)")
-                continue
-            for server in servers:
-                if server not in all_hosts:
-                    errors.append(f"Group '{group_name}' references non-existent server: {server}")
-        
-    except Exception as e:
-        errors.append(f"Error loading config: {str(e)}")
-    
-    return len(errors) == 0, errors
-
 
 def export_config(output_file: Optional[str] = None) -> str:
     """
