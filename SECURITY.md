@@ -19,7 +19,7 @@ We take the security of RemoteX seriously. If you believe you have found a secur
 - Exploit the vulnerability beyond what is necessary to demonstrate it
 
 ### Please DO:
-1. **Email** the maintainers directly at: [sagar.memane@treadbinary.com]
+1. **Email** the maintainers directly at: [wjones13522@gmail.com]
 2. **Include** the following information:
    - Type of vulnerability
    - Full paths of source file(s) related to the vulnerability
@@ -176,7 +176,7 @@ _No vulnerabilities reported yet_
 
 ## Contact
 
-For security concerns, please email: [sagar.memane@treadbinary.com]
+For security concerns, please email: [wjones13522@gmail.com]
 
 For general questions, use [GitHub Issues](https://github.com/sagar.memane/remotex/issues).
 

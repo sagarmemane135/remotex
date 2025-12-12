@@ -10,10 +10,10 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Sagar Memane", email = "sagarmemane135@gmail.com"}
+    {name = "Sagar Memane", email = "wjones13522@gmail.com"}
 ]
 maintainers = [
-    {name = "Sagar Memane", email = "sagarmemane135@gmail.com"}
+    {name = "Sagar Memane", email = "wjones13522@gmail.com"}
 ]
 keywords = ["ssh", "server", "management", "cli", "remote"]
 classifiers = [
