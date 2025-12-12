@@ -5,8 +5,6 @@ Tests for SSH config management
 import unittest
 from pathlib import Path
 from unittest.mock import patch, mock_open
-import tempfile
-import os
 
 from remotex.ssh_config import (
     get_ssh_config_path,
