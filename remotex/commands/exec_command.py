@@ -132,7 +132,7 @@ def exec_command(
                 success=(exit_status == 0),
                 metadata={"exit_code": exit_status, "plain": plain, "compact": compact}
             )
-        except:
+        except Exception:
             pass  # Don't fail command if history fails
         
         # Exit with command's exit status

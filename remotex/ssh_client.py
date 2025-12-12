@@ -29,8 +29,10 @@ def create_ssh_client(host_config: dict) -> Optional[paramiko.SSHClient]:
     
     try:
         client = paramiko.SSHClient()
-        # AutoAddPolicy is appropriate here - we rely on SSH config for host key management
-        # Users manage host keys through their ~/.ssh/known_hosts and SSH config files
+        # AutoAddPolicy is used for DevOps CLI convenience
+        # Users should manage host keys through ~/.ssh/known_hosts for production use
+        # This allows the tool to work with dynamic infrastructure and new hosts
+        # Security: This is appropriate for a CLI tool where admins control SSH config
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # nosec B507
         
         connect_params = {

@@ -43,7 +43,7 @@ def history_list(
         try:
             dt = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
             time_str = dt.strftime("%Y-%m-%d %H:%M:%S")
-        except:
+        except (ValueError, AttributeError):
             time_str = timestamp[:19] if len(timestamp) > 19 else timestamp
         
         cmd = entry.get("command", "")
@@ -78,7 +78,7 @@ def history_show(
     try:
         dt = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
         time_str = dt.strftime("%Y-%m-%d %H:%M:%S UTC")
-    except:
+    except (ValueError, AttributeError):
         time_str = timestamp
     
     panel_content = f"""

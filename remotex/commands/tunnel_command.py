@@ -27,7 +27,7 @@ def load_tunnels() -> Dict:
     try:
         with open(TUNNELS_FILE, 'r') as f:
             return json.load(f)
-    except:
+    except (FileNotFoundError, json.JSONDecodeError, PermissionError):
         return {}
 
 

@@ -346,7 +346,7 @@ def exec_all(
                 "retries": retries
             }
         )
-    except:
+    except Exception:
         pass  # Don't fail command if history fails
     
     if failed_count > 0 and not continue_on_error:
@@ -590,7 +590,7 @@ def exec_multi(
                 "timeout": timeout
             }
         )
-    except:
+    except Exception:
         pass  # Don't fail command if history fails
     
     if success_count < len(results):
@@ -889,7 +889,7 @@ def exec_group(
                 "timeout": timeout
             }
         )
-    except:
+    except Exception:
         pass  # Don't fail command if history fails
     
     if success_count < len(results):
