@@ -5,7 +5,7 @@ SSH Tunnel Management
 import typer
 import subprocess
 import json
-from typing import Optional
+from typing import Optional, Dict
 from rich.table import Table
 from rich.panel import Panel
 
