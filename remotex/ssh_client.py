@@ -39,6 +39,11 @@ def create_ssh_client(host_config: dict) -> Optional[paramiko.SSHClient]:
             'hostname': host_config['hostname'],
             'port': host_config['port'],
             'username': host_config.get('user'),
+            'timeout': 5,  # Reduced to 5s for faster connection
+            'banner_timeout': 5,
+            'auth_timeout': 5,
+            'compress': True,  # Enable compression for faster data transfer
+            'look_for_keys': False,  # Skip looking for keys, use only specified key
         }
         
         # Add key file if specified
@@ -48,6 +53,12 @@ def create_ssh_client(host_config: dict) -> Optional[paramiko.SSHClient]:
                 connect_params['key_filename'] = identity_file
         
         client.connect(**connect_params)
+        
+        # Enable TCP keep-alive to prevent connection drops
+        transport = client.get_transport()
+        if transport:
+            transport.set_keepalive(30)  # Send keep-alive packet every 30 seconds
+        
         return client
         
     except Exception as e:

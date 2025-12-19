@@ -6,7 +6,7 @@ Track all command executions for compliance and debugging
 import json
 import time
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 from remotex.config import CONFIG_DIR, load_config
@@ -47,7 +47,7 @@ def log_command_execution(
     
     # Build audit entry
     audit_entry = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "unix_time": int(time.time()),
         "user": user or getpass.getuser(),
         "command_type": command_type,
@@ -98,6 +98,20 @@ def get_recent_audit_entries(count: int = 20) -> List[Dict]:
     return entries[-count:]
 
 
+def _matches_filters(entry: Dict, user: Optional[str], command_type: Optional[str], 
+                     host: Optional[str], since: Optional[str]) -> bool:
+    """Check if audit entry matches the given filters."""
+    if user and entry.get("user") != user:
+        return False
+    if command_type and entry.get("command_type") != command_type:
+        return False
+    if host and host not in entry.get("hosts", []):
+        return False
+    if since and entry.get("timestamp", "") < since:
+        return False
+    return True
+
+
 def search_audit_log(
     user: Optional[str] = None,
     command_type: Optional[str] = None,
@@ -114,20 +128,8 @@ def search_audit_log(
         for line in f:
             try:
                 entry = json.loads(line.strip())
-                
-                # Apply filters
-                if user and entry.get("user") != user:
-                    continue
-                if command_type and entry.get("command_type") != command_type:
-                    continue
-                if host and host not in entry.get("hosts", []):
-                    continue
-                if since:
-                    # Simple timestamp comparison
-                    if entry.get("timestamp", "") < since:
-                        continue
-                
-                entries.append(entry)
+                if _matches_filters(entry, user, command_type, host, since):
+                    entries.append(entry)
             except json.JSONDecodeError:
                 continue
     

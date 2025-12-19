@@ -136,9 +136,9 @@ Full documentation: https://github.com/sagarmemane135/remotex
         f.write(main_man)
     
     print(f"✓ Generated man page: {man_dir / 'remotex.1'}")
-    print(f"\nTo install man pages:")
-    print(f"  sudo cp -r man/* /usr/share/man/")
-    print(f"  sudo mandb")
+    print("\nTo install man pages:")
+    print("  sudo cp -r man/* /usr/share/man/")
+    print("  sudo mandb")
 
 
 if __name__ == "__main__":

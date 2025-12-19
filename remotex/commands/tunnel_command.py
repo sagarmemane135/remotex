@@ -16,6 +16,9 @@ app = typer.Typer(name="tunnel", help="Manage SSH tunnels")
 
 TUNNELS_FILE = CONFIG_DIR / "tunnels.json"
 
+# Constants
+MSG_NO_ACTIVE_TUNNELS = "[yellow]No active tunnels.[/yellow]"
+
 
 def load_tunnels() -> Dict:
     """Load active tunnels from file."""
@@ -41,6 +44,97 @@ def get_tunnel_key(host: str, tunnel_type: str, local_port: int) -> str:
     return f"{host}:{tunnel_type}:{local_port}"
 
 
+def _validate_tunnel_type(tunnel_type: str) -> bool:
+    """Validate tunnel type. Returns True if valid."""
+    if tunnel_type not in ["local", "remote", "dynamic"]:
+        console.print(f"[red]Invalid tunnel type: {tunnel_type}. Must be local, remote, or dynamic.[/red]")
+        return False
+    return True
+
+
+def _build_ssh_command(tunnel_type: str, local_port: int, remote_host: str, remote_port: int,
+                        host_config: dict, background: bool) -> list:
+    """Build SSH command for tunnel."""
+    ssh_cmd = ["ssh", "-N"]  # -N: don't execute remote command
+    
+    if tunnel_type == "local":
+        ssh_cmd.extend(["-L", f"{local_port}:{remote_host}:{remote_port}"])
+    elif tunnel_type == "remote":
+        ssh_cmd.extend(["-R", f"{remote_port}:{remote_host}:{local_port}"])
+    elif tunnel_type == "dynamic":
+        ssh_cmd.extend(["-D", str(local_port)])
+    
+    # Add SSH config options
+    if host_config.get("identityfile"):
+        ssh_cmd.extend(["-i", host_config["identityfile"]])
+    if host_config.get("port") and host_config["port"] != 22:
+        ssh_cmd.extend(["-p", str(host_config["port"])])
+    
+    # Add host connection
+    user_host = f"{host_config.get('user', '')}@{host_config['hostname']}" if host_config.get('user') else host_config['hostname']
+    ssh_cmd.append(user_host)
+    
+    if background:
+        ssh_cmd.append("-f")  # Background mode
+    
+    return ssh_cmd
+
+
+def _display_tunnel_info(tunnel_type: str, local_port: int, remote_host: str, remote_port: int, host: str, pid: int) -> None:
+    """Display tunnel information after creation."""
+    console.print("[green]✓ Tunnel created:[/green]")
+    if tunnel_type == "local":
+        console.print(f"  Local port {local_port} -> {host}:{remote_host}:{remote_port}")
+    elif tunnel_type == "remote":
+        console.print(f"  Remote port {remote_port} -> {host}:{remote_host}:{local_port}")
+    elif tunnel_type == "dynamic":
+        console.print(f"  SOCKS proxy on localhost:{local_port}")
+    console.print(f"  PID: {pid}")
+
+
+def _start_tunnel_background(ssh_cmd: list, host: str, tunnel_type: str, local_port: int,
+                             remote_host: str, remote_port: int, tunnel_key: str) -> None:
+    """Start tunnel in background mode."""
+    import time
+    
+    process = subprocess.Popen(ssh_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    
+    # Wait a moment to check if it started successfully
+    time.sleep(0.5)
+    if process.poll() is not None:
+        # Process exited, likely an error
+        stderr = process.stderr.read().decode() if process.stderr else ""
+        console.print("[red]Failed to create tunnel:[/red]")
+        console.print(f"[red]{stderr}[/red]")
+        raise typer.Exit(1)
+    
+    # Save tunnel info
+    tunnels = load_tunnels()
+    tunnels[tunnel_key] = {
+        "host": host,
+        "type": tunnel_type,
+        "local_port": local_port,
+        "remote_host": remote_host,
+        "remote_port": remote_port,
+        "pid": process.pid,
+        "command": " ".join(ssh_cmd)
+    }
+    save_tunnels(tunnels)
+    
+    _display_tunnel_info(tunnel_type, local_port, remote_host, remote_port, host, process.pid)
+
+
+def _start_tunnel_foreground(ssh_cmd: list) -> None:
+    """Start tunnel in foreground mode."""
+    console.print("[green]Tunnel running in foreground. Press Ctrl+C to stop.[/green]")
+    process = subprocess.Popen(ssh_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        process.wait()
+    except KeyboardInterrupt:
+        process.terminate()
+        console.print("\n[yellow]Tunnel stopped.[/yellow]")
+
+
 @app.command("create")
 def tunnel_create(
     host: str = typer.Argument(..., help="Server alias"),
@@ -62,8 +156,7 @@ def tunnel_create(
     if remote_port is None:
         remote_port = local_port
     
-    if tunnel_type not in ["local", "remote", "dynamic"]:
-        console.print(f"[red]Invalid tunnel type: {tunnel_type}. Must be local, remote, or dynamic.[/red]")
+    if not _validate_tunnel_type(tunnel_type):
         raise typer.Exit(1)
     
     # Get SSH config for host
@@ -75,32 +168,12 @@ def tunnel_create(
         raise typer.Exit(1)
     
     # Build SSH command
-    ssh_cmd = ["ssh", "-N"]  # -N: don't execute remote command
-    
-    if tunnel_type == "local":
-        ssh_cmd.extend(["-L", f"{local_port}:{remote_host}:{remote_port}"])
-    elif tunnel_type == "remote":
-        ssh_cmd.extend(["-R", f"{remote_port}:{remote_host}:{local_port}"])
-    elif tunnel_type == "dynamic":
-        ssh_cmd.extend(["-D", str(local_port)])
-    
-    # Add SSH config options
-    if host_config.get("identityfile"):
-        ssh_cmd.extend(["-i", host_config["identityfile"]])
-    if host_config.get("port") and host_config["port"] != 22:
-        ssh_cmd.extend(["-p", str(host_config["port"])])
-    
-    # Add host connection
-    user_host = f"{host_config.get('user', '')}@{host_config['hostname']}" if host_config.get('user') else host_config['hostname']
-    ssh_cmd.append(user_host)
+    ssh_cmd = _build_ssh_command(tunnel_type, local_port, remote_host, remote_port, host_config, background)
     
     if dry_run:
-        console.print(f"[yellow]Would create tunnel:[/yellow]")
+        console.print("[yellow]Would create tunnel:[/yellow]")
         console.print(f"[cyan]{' '.join(ssh_cmd)}[/cyan]")
         return
-    
-    if background:
-        ssh_cmd.append("-f")  # Background mode
     
     try:
         # Check if tunnel already exists
@@ -112,51 +185,33 @@ def tunnel_create(
             raise typer.Exit(1)
         
         # Start tunnel
-        process = subprocess.Popen(ssh_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
         if background:
-            # Wait a moment to check if it started successfully
-            import time
-            time.sleep(0.5)
-            if process.poll() is not None:
-                # Process exited, likely an error
-                stderr = process.stderr.read().decode() if process.stderr else ""
-                console.print(f"[red]Failed to create tunnel:[/red]")
-                console.print(f"[red]{stderr}[/red]")
-                raise typer.Exit(1)
-            
-            # Save tunnel info
-            tunnels[tunnel_key] = {
-                "host": host,
-                "type": tunnel_type,
-                "local_port": local_port,
-                "remote_host": remote_host,
-                "remote_port": remote_port,
-                "pid": process.pid,
-                "command": " ".join(ssh_cmd)
-            }
-            save_tunnels(tunnels)
-            
-            console.print(f"[green]✓ Tunnel created:[/green]")
-            if tunnel_type == "local":
-                console.print(f"  Local port {local_port} -> {host}:{remote_host}:{remote_port}")
-            elif tunnel_type == "remote":
-                console.print(f"  Remote port {remote_port} -> {host}:{remote_host}:{local_port}")
-            elif tunnel_type == "dynamic":
-                console.print(f"  SOCKS proxy on localhost:{local_port}")
-            console.print(f"  PID: {process.pid}")
+            _start_tunnel_background(ssh_cmd, host, tunnel_type, local_port, remote_host, remote_port, tunnel_key)
         else:
-            # Foreground mode - just run it
-            console.print(f"[green]Tunnel running in foreground. Press Ctrl+C to stop.[/green]")
-            try:
-                process.wait()
-            except KeyboardInterrupt:
-                process.terminate()
-                console.print(f"\n[yellow]Tunnel stopped.[/yellow]")
+            _start_tunnel_foreground(ssh_cmd)
     
     except Exception as e:
         console.print(f"[red]Error creating tunnel: {e}[/red]")
         raise typer.Exit(1)
+
+
+def _check_process_status(pid: int) -> str:
+    """Check if process is running."""
+    try:
+        import os
+        os.kill(pid, 0)  # Check if process exists
+        return "✅ Active"
+    except OSError:
+        return "❌ Dead"
+
+
+def _get_remote_display(tunnel_type: str, remote_host: str, remote_port: int) -> str:
+    """Get remote display string based on tunnel type."""
+    if tunnel_type == "dynamic":
+        return "SOCKS"
+    if tunnel_type in ["local", "remote"]:
+        return f"{remote_host}:{remote_port}"
+    return "-"
 
 
 @app.command("list")
@@ -165,7 +220,7 @@ def tunnel_list():
     tunnels = load_tunnels()
     
     if not tunnels:
-        console.print("[yellow]No active tunnels.[/yellow]")
+        console.print(MSG_NO_ACTIVE_TUNNELS)
         return
     
     table = Table(title="Active SSH Tunnels", show_header=True, header_style="bold magenta")
@@ -184,22 +239,8 @@ def tunnel_list():
         remote_port = tunnel.get("remote_port", "")
         pid = tunnel.get("pid", "")
         
-        # Check if process is still running
-        try:
-            import os
-            os.kill(pid, 0)  # Check if process exists
-            status = "✅ Active"
-        except (OSError, ProcessLookupError):
-            status = "❌ Dead"
-        
-        if tunnel_type == "local":
-            remote = f"{remote_host}:{remote_port}"
-        elif tunnel_type == "remote":
-            remote = f"{remote_host}:{remote_port}"
-        elif tunnel_type == "dynamic":
-            remote = "SOCKS"
-        else:
-            remote = "-"
+        status = _check_process_status(pid)
+        remote = _get_remote_display(tunnel_type, remote_host, remote_port)
         
         table.add_row(
             host,
@@ -213,6 +254,17 @@ def tunnel_list():
     console.print(table)
 
 
+def _stop_tunnel_process(pid: int, host: str, port: int) -> None:
+    """Stop a tunnel process by PID."""
+    try:
+        import os
+        import signal
+        os.kill(pid, signal.SIGTERM)
+        console.print(f"[green]✓ Stopped tunnel: {host}:{port} (PID: {pid})[/green]")
+    except OSError:
+        console.print(f"[yellow]Process {pid} not found (may have already stopped).[/yellow]")
+
+
 @app.command("stop")
 def tunnel_stop(
     host: str = typer.Argument(..., help="Server alias"),
@@ -222,7 +274,7 @@ def tunnel_stop(
     tunnels = load_tunnels()
     
     if not tunnels:
-        console.print("[yellow]No active tunnels.[/yellow]")
+        console.print(MSG_NO_ACTIVE_TUNNELS)
         return
     
     # Find matching tunnels
@@ -240,13 +292,7 @@ def tunnel_stop(
     for key, tunnel in to_remove:
         pid = tunnel.get("pid")
         if pid:
-            try:
-                import os
-                import signal
-                os.kill(pid, signal.SIGTERM)
-                console.print(f"[green]✓ Stopped tunnel: {host}:{tunnel.get('local_port')} (PID: {pid})[/green]")
-            except (OSError, ProcessLookupError):
-                console.print(f"[yellow]Process {pid} not found (may have already stopped).[/yellow]")
+            _stop_tunnel_process(pid, host, tunnel.get('local_port'))
         
         del tunnels[key]
     
@@ -261,7 +307,7 @@ def tunnel_stop_all(
     tunnels = load_tunnels()
     
     if not tunnels:
-        console.print("[yellow]No active tunnels.[/yellow]")
+        console.print(MSG_NO_ACTIVE_TUNNELS)
         return
     
     if not confirm:
@@ -278,9 +324,9 @@ def tunnel_stop_all(
                 import os
                 import signal
                 os.kill(pid, signal.SIGTERM)
-            except (OSError, ProcessLookupError):
+            except OSError:
                 pass
     
     save_tunnels({})
-    console.print(f"[green]✓ Stopped all tunnels.[/green]")
+    console.print("[green]✓ Stopped all tunnels.[/green]")
 

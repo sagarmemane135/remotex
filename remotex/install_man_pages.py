@@ -62,7 +62,7 @@ def install_man_pages():
     # Check for sudo/admin rights
     if os.geteuid() != 0 and str(man_dest).startswith("/usr"):
         print("Installing man pages to system directory requires administrator privileges.")
-        print(f"Please run: sudo python -m remotex.install_man_pages")
+        print("Please run: sudo python -m remotex.install_man_pages")
         print(f"Or manually: sudo cp -r {man_source}/* {man_dest}/")
         return False
     
@@ -89,7 +89,7 @@ def install_man_pages():
                 print("Updated man database.")
         
         print(f"✓ Successfully installed {installed} man page(s)!")
-        print(f"  You can now use: man remotex")
+        print("  You can now use: man remotex")
         return True
     
     except PermissionError:

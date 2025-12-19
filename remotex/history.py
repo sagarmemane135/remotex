@@ -6,7 +6,7 @@ Track and replay command history
 import json
 import shlex
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Tuple
 
 from remotex.config import CONFIG_DIR
@@ -37,7 +37,7 @@ def add_to_history(
     
     entry = {
         "id": len(data["commands"]) + 1,
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
         "command": command,
         "args": args,
         "hosts": hosts,

@@ -15,6 +15,13 @@ from remotex.config import resolve_server
 
 console = Console()
 
+# Constants
+HELP_SERVER_ALIAS = "Server alias (uses default if not specified)"
+OPTION_COMPACT_NORMAL = "--compact/--normal"
+OPTION_SHORT_CN = "-c/-n"
+ERROR_NO_SERVER_WITH_CONFIG = "[red]No server specified and no default server set. Use: remotex config set-default <server>[/red]"
+ERROR_NO_SERVER = "[red]No server specified and no default server set.[/red]"
+
 
 def register_quick_commands(app: typer.Typer):
     """Register quick shortcut commands."""
@@ -29,103 +36,103 @@ def register_quick_commands(app: typer.Typer):
 
 
 def uptime(
-    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
-    compact: bool = typer.Option(True, "--compact/--normal", "-c/-n", help="Compact output (default for quick commands)")
+    host: Optional[str] = typer.Argument(None, help=HELP_SERVER_ALIAS),
+    compact: bool = typer.Option(True, OPTION_COMPACT_NORMAL, OPTION_SHORT_CN, help="Compact output (default for quick commands)")
 ):
     """Quick uptime check."""
     host = resolve_server(host)
     if not host:
-        console.print("[red]No server specified and no default server set. Use: remotex config set-default <server>[/red]")
+        console.print(ERROR_NO_SERVER_WITH_CONFIG)
         raise typer.Exit(code=1)
     exec_command(host, "uptime", plain=False, compact=compact, silent=False)
 
 
 def disk(
-    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
-    compact: bool = typer.Option(True, "--compact/--normal", "-c/-n", help="Compact output")
+    host: Optional[str] = typer.Argument(None, help=HELP_SERVER_ALIAS),
+    compact: bool = typer.Option(True, OPTION_COMPACT_NORMAL, OPTION_SHORT_CN, help="Compact output")
 ):
     """Quick disk usage check."""
     host = resolve_server(host)
     if not host:
-        console.print("[red]No server specified and no default server set. Use: remotex config set-default <server>[/red]")
+        console.print(ERROR_NO_SERVER_WITH_CONFIG)
         raise typer.Exit(code=1)
     exec_command(host, "df -h", plain=False, compact=compact, silent=False)
 
 
 def memory(
-    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
-    compact: bool = typer.Option(True, "--compact/--normal", "-c/-n", help="Compact output")
+    host: Optional[str] = typer.Argument(None, help=HELP_SERVER_ALIAS),
+    compact: bool = typer.Option(True, OPTION_COMPACT_NORMAL, OPTION_SHORT_CN, help="Compact output")
 ):
     """Quick memory usage check."""
     host = resolve_server(host)
     if not host:
-        console.print("[red]No server specified and no default server set. Use: remotex config set-default <server>[/red]")
+        console.print(ERROR_NO_SERVER_WITH_CONFIG)
         raise typer.Exit(code=1)
     exec_command(host, "free -h", plain=False, compact=compact, silent=False)
 
 
 def cpu(
-    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
-    compact: bool = typer.Option(True, "--compact/--normal", "-c/-n")
+    host: Optional[str] = typer.Argument(None, help=HELP_SERVER_ALIAS),
+    compact: bool = typer.Option(True, OPTION_COMPACT_NORMAL, OPTION_SHORT_CN)
 ):
     """Quick CPU info."""
     host = resolve_server(host)
     if not host:
-        console.print("[red]No server specified and no default server set.[/red]")
+        console.print(ERROR_NO_SERVER)
         raise typer.Exit(code=1)
     exec_command(host, "lscpu | head -20", plain=False, compact=compact, silent=False)
 
 
 def processes(
-    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
+    host: Optional[str] = typer.Argument(None, help=HELP_SERVER_ALIAS),
     limit: int = typer.Option(15, "--limit", "-n", help="Number of processes to show"),
-    compact: bool = typer.Option(True, "--compact/--normal", "-c/-n")
+    compact: bool = typer.Option(True, OPTION_COMPACT_NORMAL, OPTION_SHORT_CN)
 ):
     """Quick process list."""
     host = resolve_server(host)
     if not host:
-        console.print("[red]No server specified and no default server set.[/red]")
+        console.print(ERROR_NO_SERVER)
         raise typer.Exit(code=1)
     exec_command(host, f"ps aux --sort=-%mem | head -{limit}", plain=False, compact=compact, silent=False)
 
 
 def restart_service(
-    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
+    host: Optional[str] = typer.Argument(None, help=HELP_SERVER_ALIAS),
     service: str = typer.Argument(..., help="Service name"),
-    compact: bool = typer.Option(True, "--compact/--normal", "-c/-n")
+    compact: bool = typer.Option(True, OPTION_COMPACT_NORMAL, OPTION_SHORT_CN)
 ):
     """Quick service restart."""
     host = resolve_server(host)
     if not host:
-        console.print("[red]No server specified and no default server set.[/red]")
+        console.print(ERROR_NO_SERVER)
         raise typer.Exit(code=1)
     exec_command(host, f"sudo systemctl restart {service} && sudo systemctl status {service}", plain=False, compact=compact, silent=False)
 
 
 def service_status(
-    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
+    host: Optional[str] = typer.Argument(None, help=HELP_SERVER_ALIAS),
     service: str = typer.Argument(..., help="Service name"),
-    compact: bool = typer.Option(True, "--compact/--normal", "-c/-n")
+    compact: bool = typer.Option(True, OPTION_COMPACT_NORMAL, OPTION_SHORT_CN)
 ):
     """Quick service status check."""
     host = resolve_server(host)
     if not host:
-        console.print("[red]No server specified and no default server set.[/red]")
+        console.print(ERROR_NO_SERVER)
         raise typer.Exit(code=1)
     exec_command(host, f"sudo systemctl status {service}", plain=False, compact=compact, silent=False)
 
 
 def logs(
-    host: Optional[str] = typer.Argument(None, help="Server alias (uses default if not specified)"),
+    host: Optional[str] = typer.Argument(None, help=HELP_SERVER_ALIAS),
     service: str = typer.Argument(..., help="Service name or log file path"),
     lines: int = typer.Option(50, "--lines", "-n", help="Number of lines to show"),
     follow: bool = typer.Option(False, "--follow", "-f", help="Follow log output"),
-    compact: bool = typer.Option(True, "--compact/--normal", "-c/-n")
+    compact: bool = typer.Option(True, OPTION_COMPACT_NORMAL, OPTION_SHORT_CN)
 ):
     """Quick log viewing."""
     host = resolve_server(host)
     if not host:
-        console.print("[red]No server specified and no default server set.[/red]")
+        console.print(ERROR_NO_SERVER)
         raise typer.Exit(code=1)
     
     if '/' in service or service.endswith('.log'):

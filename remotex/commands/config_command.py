@@ -49,7 +49,7 @@ def show_config():
     default_server = config.get("default_server") or "[dim]Not set[/dim]"
     table.add_row("Default Server", default_server)
     table.add_row("Output Mode", config.get("output_mode", "normal"))
-    table.add_row("Parallel Connections", str(config.get("parallel_connections", 5)))
+    table.add_row("Parallel Connections", str(config.get("parallel_connections", 10)))
     table.add_row("Timeout (seconds)", str(config.get("timeout", 30)))
     
     # Show aliases

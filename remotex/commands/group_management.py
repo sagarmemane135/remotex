@@ -14,10 +14,13 @@ from remotex.ssh_config import get_all_hosts
 console = Console()
 group_app = typer.Typer(help="Manage server groups")
 
+# Constants
+HELP_GROUP_NAME = "Group name"
+
 
 @group_app.command(name="add")
 def group_add(
-    group_name: str = typer.Argument(..., help="Group name"),
+    group_name: str = typer.Argument(..., help=HELP_GROUP_NAME),
     servers: str = typer.Argument(..., help="Comma-separated list of servers")
 ):
     """Create or update a server group."""
@@ -30,7 +33,7 @@ def group_add(
     
     if invalid_servers:
         console.print(f"[red]✗[/red] Invalid servers: {', '.join(invalid_servers)}")
-        console.print(f"[yellow]Use 'remotex list' to see available servers[/yellow]")
+        console.print("[yellow]Use 'remotex list' to see available servers[/yellow]")
         raise typer.Exit(1)
     
     config.add_group(group_name, server_list)
@@ -70,7 +73,7 @@ def group_list():
 
 @group_app.command(name="show")
 def group_show(
-    group_name: str = typer.Argument(..., help="Group name")
+    group_name: str = typer.Argument(..., help=HELP_GROUP_NAME)
 ):
     """Show servers in a group."""
     servers = config.get_group_servers(group_name)
@@ -99,7 +102,7 @@ def group_show(
 
 @group_app.command(name="add-server")
 def group_add_server(
-    group_name: str = typer.Argument(..., help="Group name"),
+    group_name: str = typer.Argument(..., help=HELP_GROUP_NAME),
     server: str = typer.Argument(..., help="Server to add")
 ):
     """Add a server to an existing group."""
@@ -116,7 +119,7 @@ def group_add_server(
 
 @group_app.command(name="remove-server")
 def group_remove_server(
-    group_name: str = typer.Argument(..., help="Group name"),
+    group_name: str = typer.Argument(..., help=HELP_GROUP_NAME),
     server: str = typer.Argument(..., help="Server to remove")
 ):
     """Remove a server from a group."""
@@ -126,7 +129,7 @@ def group_remove_server(
 
 @group_app.command(name="remove")
 def group_remove(
-    group_name: str = typer.Argument(..., help="Group name"),
+    group_name: str = typer.Argument(..., help=HELP_GROUP_NAME),
     force: bool = typer.Option(False, "--force", "-f", help="Skip confirmation")
 ):
     """Remove a group."""

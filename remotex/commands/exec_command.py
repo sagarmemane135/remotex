@@ -20,6 +20,120 @@ def register_exec_command(app: typer.Typer):
     app.command(name="exec")(exec_command)
 
 
+def _display_connection_panel(host: str, host_config: dict, command: str, plain: bool, compact: bool, silent: bool) -> None:
+    """Display connection information based on output mode."""
+    if not plain and not compact and not silent:
+        console.print(Panel(
+            f"[cyan]Host:[/cyan] {host}\n"
+            f"[cyan]Server:[/cyan] {host_config.get('user', 'N/A')}@{host_config['hostname']}:{host_config['port']}\n"
+            f"[cyan]Command:[/cyan] {command}",
+            title="🔌 Connecting",
+            border_style="cyan",
+            box=box.ROUNDED
+        ))
+    elif plain and not compact and not silent:
+        console.print(f"Connecting to {host}...")
+
+
+def _display_silent_output(output: str, error: str) -> None:
+    """Display output in silent mode (no output)."""
+    pass  # Silent mode - no output
+
+
+def _display_compact_output(output: str, error: str) -> None:
+    """Display output in compact mode."""
+    if output:
+        console.print(output.strip())
+    if error:
+        console.print(f"[red]{error.strip()}[/red]")
+
+
+def _display_plain_output(output: str, error: str) -> None:
+    """Display output in plain mode."""
+    if output:
+        console.print(output, end='')
+    if error:
+        console.print(error, end='', style="red")
+
+
+def _build_formatted_output(output: str, error: str) -> str:
+    """Build formatted output text with colors."""
+    output_text = ""
+    
+    if output:
+        output_text += f"[green]{output.rstrip()}[/green]"
+    
+    if error:
+        if output_text:
+            output_text += "\n\n"
+        output_text += f"[red bold]Errors:[/red bold]\n[red]{error.rstrip()}[/red]"
+    
+    return output_text
+
+
+def _display_formatted_output(output: str, error: str, exit_status: int) -> None:
+    """Display output in formatted mode with panels."""
+    if output or error:
+        output_text = _build_formatted_output(output, error)
+        
+        if exit_status == 0:
+            title = "✓ Output"
+            border_style = "green"
+        else:
+            title = f"⚠ Output (Exit Code: {exit_status})"
+            border_style = "yellow"
+        
+        console.print(Panel(
+            output_text,
+            title=title,
+            border_style=border_style,
+            box=box.ROUNDED,
+            expand=False
+        ))
+    else:
+        console.print(Panel(
+            "[dim]Command executed successfully with no output[/dim]",
+            title="✓ Complete",
+            border_style="green",
+            box=box.ROUNDED
+        ))
+
+
+def _display_output(output: str, error: str, exit_status: int, plain: bool, compact: bool, silent: bool) -> None:
+    """Display output based on the selected mode."""
+    if silent:
+        _display_silent_output(output, error)
+    elif compact:
+        _display_compact_output(output, error)
+    elif plain:
+        _display_plain_output(output, error)
+    else:
+        _display_formatted_output(output, error, exit_status)
+
+
+def _log_to_history(command: str, host: str, exit_status: int, plain: bool, compact: bool) -> None:
+    """Log command execution to history."""
+    try:
+        add_to_history(
+            command="exec",
+            args=[command],
+            hosts=[host],
+            success=(exit_status == 0),
+            metadata={"exit_code": exit_status, "plain": plain, "compact": compact}
+        )
+    except Exception:
+        pass  # Don't fail command if history fails
+
+
+def _display_error(error: Exception) -> None:
+    """Display execution error message."""
+    console.print(Panel(
+        f"[red]Error executing command[/red]\n\n{str(error)}",
+        title="❌ Execution Error",
+        border_style="red"
+    ))
+
+
 def exec_command(
     host: str = typer.Argument(..., help="SSH host alias from ~/.ssh/config"),
     command: str = typer.Argument(..., help="Command to execute on remote host"),
@@ -41,18 +155,8 @@ def exec_command(
     if not host_config:
         raise typer.Exit(code=1)
     
-    # Show connection info (skip in compact/silent modes)
-    if not plain and not compact and not silent:
-        console.print(Panel(
-            f"[cyan]Host:[/cyan] {host}\n"
-            f"[cyan]Server:[/cyan] {host_config.get('user', 'N/A')}@{host_config['hostname']}:{host_config['port']}\n"
-            f"[cyan]Command:[/cyan] {command}",
-            title="🔌 Connecting",
-            border_style="cyan",
-            box=box.ROUNDED
-        ))
-    elif plain and not compact and not silent:
-        console.print(f"Connecting to {host}...")
+    # Show connection info
+    _display_connection_panel(host, host_config, command, plain, compact, silent)
     
     # Create SSH client
     client = create_ssh_client(host_config)
@@ -64,7 +168,7 @@ def exec_command(
             console.print()
         
         # Execute command
-        stdin, stdout, stderr = client.exec_command(command)
+        _, stdout, stderr = client.exec_command(command)
         
         # Read output
         output = stdout.read().decode('utf-8')
@@ -72,79 +176,17 @@ def exec_command(
         exit_status = stdout.channel.recv_exit_status()
         
         # Display output based on mode
-        if silent:
-            # Silent mode - no output, just exit code
-            pass
-        elif compact:
-            # Compact mode - minimal output
-            if output:
-                console.print(output.strip())
-            if error:
-                console.print(f"[red]{error.strip()}[/red]")
-        elif plain:
-            # Plain mode - just print output
-            if output:
-                console.print(output, end='')
-            if error:
-                console.print(error, end='', style="red")
-        else:
-            # Formatted mode with panels
-            if output or error:
-                output_text = ""
-                
-                if output:
-                    output_text += f"[green]{output.rstrip()}[/green]"
-                
-                if error:
-                    if output_text:
-                        output_text += "\n\n"
-                    output_text += f"[red bold]Errors:[/red bold]\n[red]{error.rstrip()}[/red]"
-                
-                # Success or error panel
-                if exit_status == 0:
-                    title = "✓ Output"
-                    border_style = "green"
-                else:
-                    title = f"⚠ Output (Exit Code: {exit_status})"
-                    border_style = "yellow"
-                
-                console.print(Panel(
-                    output_text,
-                    title=title,
-                    border_style=border_style,
-                    box=box.ROUNDED,
-                    expand=False
-                ))
-            else:
-                console.print(Panel(
-                    "[dim]Command executed successfully with no output[/dim]",
-                    title="✓ Complete",
-                    border_style="green",
-                    box=box.ROUNDED
-                ))
+        _display_output(output, error, exit_status, plain, compact, silent)
         
         # Add to history
-        try:
-            add_to_history(
-                command="exec",
-                args=[command],
-                hosts=[host],
-                success=(exit_status == 0),
-                metadata={"exit_code": exit_status, "plain": plain, "compact": compact}
-            )
-        except Exception:
-            pass  # Don't fail command if history fails
+        _log_to_history(command, host, exit_status, plain, compact)
         
         # Exit with command's exit status
         if exit_status != 0:
             raise typer.Exit(code=exit_status)
             
     except Exception as e:
-        console.print(Panel(
-            f"[red]Error executing command[/red]\n\n{str(e)}",
-            title="❌ Execution Error",
-            border_style="red"
-        ))
+        _display_error(e)
         raise typer.Exit(code=1)
     finally:
         client.close()
