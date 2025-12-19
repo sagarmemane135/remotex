@@ -5,6 +5,19 @@ All notable changes to RemoteX will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2025-12-19
+
+### Fixed
+- **Code Quality Improvements**: Resolved all SonarQube code quality issues
+  - Reduced cognitive complexity across 8 files (bulk_operations.py, connect_command.py, exec_command.py, group_management.py, quick_commands.py, tunnel_command.py, connection_pool.py, config.py)
+  - Extracted 60+ helper functions to improve code maintainability
+  - Eliminated duplicate string literals (11+ constants added)
+  - Removed unnecessary f-string prefixes (15+ fixes across multiple files)
+  - Fixed unused variables and redundant exception handling
+  - Replaced deprecated `datetime.utcnow()` with timezone-aware `datetime.now(timezone.utc)`
+- **Maintainability**: All functions now have cognitive complexity ≤15
+- **Best Practices**: Improved code organization and readability throughout the codebase
+
 ## [1.0.1] - 2025-12-11
 
 ### Changed

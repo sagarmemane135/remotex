@@ -61,7 +61,7 @@ def profile_show(
     
     # Get summary
     summary = get_profile_summary(profile_path)
-    console.print(f"\n[bold]Profile Summary:[/bold]")
+    console.print("\n[bold]Profile Summary:[/bold]")
     console.print(f"  Total calls: {summary['total_calls']}")
     console.print(f"  Total time: {summary['total_time']:.4f}s")
     console.print(f"  Cumulative time: {summary['cumulative_time']:.4f}s")

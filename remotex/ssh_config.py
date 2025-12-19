@@ -8,9 +8,6 @@ from pathlib import Path
 from typing import Optional, List, Dict
 
 import paramiko
-from rich.console import Console
-
-console = Console()
 
 
 def get_ssh_config_path() -> Path:
@@ -89,7 +86,7 @@ def parse_ssh_config(host_alias: str) -> Optional[dict]:
     ssh_config_path = get_ssh_config_path()
     
     if not ssh_config_path.exists():
-        console.print(f"[red]Error: SSH config file not found at {ssh_config_path}[/red]")
+        # Don't print error here - let caller handle it
         return None
     
     try:
@@ -106,8 +103,8 @@ def parse_ssh_config(host_alias: str) -> Optional[dict]:
             'identityfile': host_config.get('identityfile', [None])[0],
             'proxyjump': host_config.get('proxyjump')
         }
-    except Exception as e:
-        console.print(f"[red]Error parsing SSH config: {e}[/red]")
+    except Exception:
+        # Don't print error here - let caller handle it
         return None
 
 

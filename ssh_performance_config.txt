@@ -1,0 +1,30 @@
+# SSH ControlMaster Configuration
+# Add this to ~/.ssh/config for persistent SSH connection reuse
+
+# Global settings for all hosts
+Host *
+    # Enable connection multiplexing
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%r@%h:%p
+    ControlPersist 10m
+    
+    # Performance optimizations
+    Compression yes
+    ServerAliveInterval 30
+    ServerAliveCountMax 3
+    
+    # Fast connection
+    TCPKeepAlive yes
+
+# Your Azure VMs (already configured)
+# Host tf-demo-vm
+#     HostName 4.227.222.204
+#     User azureuser
+#     Port 22
+#     IdentityFile ~/.ssh/id_rsa
+
+# Host tf-demo-vm2  
+#     HostName 172.191.42.163
+#     User azureuser
+#     Port 22
+#     IdentityFile ~/.ssh/id_rsa

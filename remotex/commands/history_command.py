@@ -91,7 +91,7 @@ def history_show(
 """
     
     if entry.get("metadata"):
-        panel_content += f"\n[bold]Metadata:[/bold]\n"
+        panel_content += "\n[bold]Metadata:[/bold]\n"
         for key, value in entry.get("metadata", {}).items():
             panel_content += f"  {key}: {value}\n"
     
