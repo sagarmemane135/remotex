@@ -8,6 +8,9 @@ from pathlib import Path
 from typing import Optional, List, Dict
 
 import paramiko
+from rich.console import Console
+
+console = Console()
 
 
 def get_ssh_config_path() -> Path:
